@@ -17,7 +17,8 @@ defmodule Exile.Store do
   @callback put(Path.t(), Record.t()) :: :ok | {:error, Exile.put_error_reason()}
   @callback delete(Path.t()) :: {:ok, Record.t()} | {:error, Exile.delete_error_reason()}
   @callback subscribe(Path.t(), Subscriber.t()) :: :ok | {:error, Exile.subscribe_error_reason()}
-  @callback unsubscribe(Path.t(), Subscriber.t()) :: :ok | {:error, Exile.unsubscribe_error_reason()}
+  @callback unsubscribe(Path.t(), Subscriber.t()) ::
+              :ok | {:error, Exile.unsubscribe_error_reason()}
 
   @doc "Return the record(s) at the path."
   @spec get(t(), Path.t()) :: {:ok, Record.t()} | {:error, Exile.get_error_reason()}

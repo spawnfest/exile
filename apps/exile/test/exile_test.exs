@@ -64,6 +64,7 @@ defmodule ExileTest do
 
       post = Jason.decode!(json)
       assert {:ok, post_id} = Exile.post("posts", post)
+
       assert :cannot_create_record_on_attribute =
                Exile.post("posts/#{post_id}/author", "someone_else")
     end
