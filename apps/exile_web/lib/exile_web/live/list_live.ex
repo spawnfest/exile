@@ -5,7 +5,7 @@ defmodule ExileWeb.ListLive do
     ~L""
   end
   
-  def mount(session, socket) do
+  def mount(_session, socket) do
     {:ok, socket}
   end
 end

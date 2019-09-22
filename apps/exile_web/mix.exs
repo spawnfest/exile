@@ -13,14 +13,10 @@ defmodule ExileWeb.MixProject do
       elixirc_paths: elixirc_paths(Mix.env()),
       compilers: [:phoenix, :gettext] ++ Mix.compilers(),
       start_permanent: Mix.env() == :prod,
-      aliases: aliases(),
       deps: deps()
     ]
   end
 
-  # Configuration for the OTP application.
-  #
-  # Type `mix help compile.app` for more information.
   def application do
     [
       mod: {ExileWeb.Application, []},
@@ -28,17 +24,12 @@ defmodule ExileWeb.MixProject do
     ]
   end
 
-  # Specifies which paths to compile per environment.
   defp elixirc_paths(:test), do: ["lib", "test/support"]
   defp elixirc_paths(_), do: ["lib"]
 
-  # Specifies your project dependencies.
-  #
-  # Type `mix help deps` for examples and options.
   defp deps do
     [
       {:exile, in_umbrella: true},
-      {:exile_auth, in_umbrella: true},
       {:elixir_uuid,  "~> 1.2.0"},
       {:phoenix, "~> 1.4.9"},
       {:phoenix_pubsub, "~> 1.1"},
@@ -48,16 +39,7 @@ defmodule ExileWeb.MixProject do
       {:phoenix_live_view, "~> 0.3.0"},
       {:gettext, "~> 0.11"},
       {:jason, "~> 1.0"},
-      {:plug_cowboy, "~> 2.0"},
-      {:guardian, "~> 1.2"}
+      {:plug_cowboy, "~> 2.0"}
     ]
-  end
-
-  # Aliases are shortcuts or tasks specific to the current project.
-  # For example, we extend the test task to create and migrate the database.
-  #
-  # See the documentation for `Mix` for more info on aliases.
-  defp aliases do
-    [test: ["ecto.create --quiet", "ecto.migrate", "test"]]
   end
 end

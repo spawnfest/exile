@@ -8,10 +8,9 @@ defmodule ExileWeb.PageController do
     render(conn, "index.html", prefix: prefix, payload: payload)
   end
 
-  def index(conn, params) do
+  def index(conn, _) do
     prefix = UUID.uuid4()
     token = ConnectionToken.encode(prefix: prefix)
-    # tbd: prepare some objects
     conn |> redirect(to: Routes.page_path(conn, :index, %{token: token}))
   end
 end
