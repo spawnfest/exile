@@ -3,7 +3,7 @@ defmodule ExileWeb.ListLive do
 
   def render(assigns) do
     ~L"""
-      <form phx-change="update">
+      <form phx-change="update" phx-submit="update">
         <div class="form-group">
           <label for="reference">Reference</label>
           <input class="form-control" type="text" name="reference" value="<%= @reference %>" autocomplete="off">
@@ -46,18 +46,13 @@ defmodule ExileWeb.ListLive do
     {:ok, assign(socket, prefix: session.prefix, reference: session.reference, entries: entries)}
   end
 
-  def handle_info({:exile_event, {:new, _, {id, ts, value}}}, socket) do
-    # FIXME: value is top-level object if subscription is on path
-    entry = %{id: id, ts: ts, value: value}
-    entries = [entry | socket.assigns.entries]
-    {:noreply, assign(socket, entries: entries)}
-  end
-
-  def handle_info({:exile_event, {:update, p, {id, ts, value}}}, socket) do
-    # FIXME: value is top-level object if subscription is on path
-    entry = %{id: id, ts: ts, value: value}
-    entries = put_in(socket.assigns.entries, [Access.filter(& &1.id == id)], entry)
-    {:noreply, assign(socket, entries: entries)}
+  def handle_info({:exile_event, _}, socket) do
+    with %{assigns: %{reference: reference}} <- socket,
+         {:ok, entries} when is_list(entries) <- Exile.get(path(reference, socket)) do
+      {:noreply, assign(socket, entries: entries)}
+    else
+      _ -> {:noreply, assign(socket, entries: [])}
+    end
   end
 
   def handle_event("update", %{"reference" => ""}, socket) do
@@ -70,10 +65,10 @@ defmodule ExileWeb.ListLive do
       :ok = Exile.unsubscribe(path(socket.assigns.reference, socket))
     end
 
-    :ok = Exile.subscribe(socket.assigns.prefix <> ":" <> reference)
-
-    case Exile.get(path(reference, socket)) do
-      {:ok, entries} when is_list(entries) -> {:noreply, assign(socket, reference: reference, entries: entries)}
+    with :ok = Exile.subscribe(socket.assigns.prefix <> ":" <> reference),
+         {:ok, entries} when is_list(entries) <- Exile.get(path(reference, socket)) do
+      {:noreply, assign(socket, reference: reference, entries: entries)}
+    else
       _ -> {:noreply, assign(socket, reference: reference, entries: [])}
     end
   end
