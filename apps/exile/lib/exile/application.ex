@@ -6,9 +6,7 @@ defmodule Exile.Application do
   use Application
 
   def start(_type, _args) do
-    children = [
-      Exile.Repo
-    ]
+    children = Exile.child_specs() ++ [Exile.Repo]
 
     Supervisor.start_link(children, strategy: :one_for_one, name: Exile.Supervisor)
   end

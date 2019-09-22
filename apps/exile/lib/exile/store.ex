@@ -19,6 +19,7 @@ defmodule Exile.Store do
   @callback subscribe(Path.t(), Subscriber.t()) :: :ok | {:error, Exile.subscribe_error_reason()}
   @callback unsubscribe(Path.t(), Subscriber.t()) ::
               :ok | {:error, Exile.unsubscribe_error_reason()}
+  @callback child_specs() :: [Supervisor.child_spec()]
 
   @doc "Return the record(s) at the path."
   @spec get(t(), Path.t()) :: {:ok, Record.t()} | {:error, Exile.get_error_reason()}
@@ -56,5 +57,11 @@ defmodule Exile.Store do
           :ok | {:error, Exile.unsubscribe_error_reason()}
   def unsubscribe(store, path, subscriber) when is_atom(store) do
     store.unsubscribe(path, subscriber)
+  end
+
+  @doc "Child specifications of processes used in the storage implementation"
+  @spec child_specs(t()) :: [Supervisor.child_spec()]
+  def child_specs(store) do
+    store.child_specs()
   end
 end

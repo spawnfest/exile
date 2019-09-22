@@ -1,5 +1,5 @@
 defmodule ExileTest do
-  use Exile.DataCase
+  use ExUnit.Case
 
   describe "post" do
     test "should create a new record" do

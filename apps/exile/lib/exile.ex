@@ -51,4 +51,10 @@ defmodule Exile do
     subscriber = subscriber || self()
     Store.unsubscribe(store(), path, subscriber)
   end
+
+  @doc "Child specifications of processes used by exile"
+  @spec child_specs() :: [Supervisor.child_spec()]
+  def child_specs() do
+    Store.child_specs(store())
+  end
 end
