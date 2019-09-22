@@ -28,6 +28,9 @@ window.exile = {
   },
   post: function (reference, value) {
     return this.push(channel, "post", {reference: reference, value: value});
+  },
+  put: function (reference, value) {
+    return this.push(channel, "post", {reference: reference, value: value});
   }
 };
 
