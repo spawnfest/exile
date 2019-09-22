@@ -82,7 +82,6 @@ consoleFormElement.addEventListener("submit", (event) => {
   event.preventDefault();
 }, false);
 
-
 console.log = function (message) {
   consoleAppend(message, 'log');
   consoleLog.apply(console, arguments);
@@ -98,7 +97,7 @@ window.shortcut_subscribe_post = function () {
     node.remove();
   });
 
-  console.log('Shortcut: Subscribe to `posts`');
+  consoleAppend('Shortcut: Subscribe to `posts`');
   var promise = exile.subscribe('posts');
   consoleAppend("1> exile.subscribe('posts')");
   consoleLogPromise(promise);
@@ -109,7 +108,7 @@ window.shortcut_get_posts = function () {
     node.remove();
   });
 
-  console.log('Shortcut: Get Posts');
+  consoleAppend('Shortcut: Get Posts');
   var promise = exile.get('posts');
   consoleAppend("1> exile.get('posts')");
   consoleLogPromise(promise);
@@ -120,7 +119,7 @@ window.shortcut_create_post = function () {
     node.remove();
   });
 
-  console.log('Shortcut: Create Post');
+  consoleAppend('Shortcut: Create Post');
   var promise = exile.post('posts', {title: 'Hello World', comments: []});
   consoleAppend("1> exile.post('posts', {title: 'Hello World', comments: []})", 'command');
   promise.then((data) => {
@@ -136,7 +135,7 @@ window.shortcut_create_post_comment = function () {
     node.remove();
   });
 
-  console.log('Shortcut: Create Post & Comment');
+  consoleAppend('Shortcut: Create Post & Comment');
   var promise = exile.post('posts', {title: 'Hello World', comments: []});
   consoleAppend("1> exile.post('posts', {title: 'Hello World', comments: []})", 'command');
   promise.then((post) => {

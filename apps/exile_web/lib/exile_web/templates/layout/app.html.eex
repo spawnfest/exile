@@ -19,7 +19,12 @@
     <%= render @view_module, @view_template, assigns %>
     <footer class="footer mt-auto py-3">
       <div class="container">
-        <span class="text-muted">Presented by the Bodgemasters</span>
+        <span class="text-muted">
+          Presented by the Bodgemasters
+          • <a href="https://github.com/holsee" target="_blank">holsee</a>
+          | <a href="https://github.com/evadne" target="_blank">evadne</a>
+          | <a href="https://github.com/bgottlob" target="_blank">bgottlob</a>
+        </span>
       </div>
     </footer>
     <%= if assigns[:payload] do %>
