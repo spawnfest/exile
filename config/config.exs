@@ -18,8 +18,8 @@ config :exile_web,
   generators: [context_app: :exile]
 
 config :exile_auth,
-  ecto_repos: [Exile.Repo],
-  generators: [context_app: :exile]
+  ecto_repos: [ExileAuth.Repo],
+  generators: [context_app: :exile_auth]
 
 # Configures the endpoint
 config :exile_web, ExileWeb.Endpoint,
