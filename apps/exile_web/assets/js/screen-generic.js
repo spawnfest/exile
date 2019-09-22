@@ -1,8 +1,9 @@
-import css from "../css/screen-generic.scss"
-import "phoenix_html"
-import {Socket} from "phoenix";
-import {LiveSocket} from 'phoenix_live_view';
-import StringifyObject from 'stringify-object';
+import css from '../css/screen-generic.scss'
+import 'bootstrap';
+import 'phoenix_html'
+import {Socket} from 'phoenix'
+import {LiveSocket} from 'phoenix_live_view'
+import StringifyObject from 'stringify-object'
 
 var liveSocket = new LiveSocket("/live", Socket);
 liveSocket.connect();
@@ -34,7 +35,7 @@ window.exile = {
     return this.push(channel, "post", {reference: reference, value: value});
   },
   put: function (reference, value) {
-    return this.push(channel, "post", {reference: reference, value: value});
+    return this.push(channel, "put", {reference: reference, value: value});
   },
   subscribe: function (reference, value) {
     return this.push(channel, "subscribe", {reference: reference});
@@ -64,7 +65,11 @@ var consoleLogPromise = function (promise) {
 }
 
 consoleFormElement.addEventListener("submit", (event) => {
+  event.preventDefault();
   var command = event.target.elements["command"].value;
+  if (command == "") {
+    return;
+  }
   consoleAppend(command, 'request');
   setTimeout(() => {
     try {
@@ -79,7 +84,7 @@ consoleFormElement.addEventListener("submit", (event) => {
     }
   });
   event.target.reset();
-  event.preventDefault();
+  event.target.elements["command"].value = "";
 }, false);
 
 console.log = function (message) {
@@ -147,6 +152,22 @@ window.shortcut_create_post_comment = function () {
       consoleAppend("3> exile.get(`posts/${post.value}`)", 'command');
       consoleLogPromise(promise);
     });
+  });
+  consoleLogPromise(promise);
+}
+
+window.shortcut_create_update_post = function () {
+  consoleHistoryElement.querySelectorAll('*').forEach(function(node) {
+    node.remove();
+  });
+
+  consoleAppend('Shortcut: Create & Update');
+  var promise = exile.post('posts', {title: 'Hello World', comments: []});
+  consoleAppend("1> exile.post('posts', {title: 'Hello World', comments: []})", 'command');
+  promise.then((post) => {
+    var promise = exile.put(`posts/${post.value}/title`, 'Hello Elixir');
+    consoleAppend("2> exile.post(`posts/${post.value}/title`, 'Hello Elixir')", 'command');
+    consoleLogPromise(promise);
   });
   consoleLogPromise(promise);
 }
