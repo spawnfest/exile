@@ -25,7 +25,7 @@ defmodule ExileWeb.DatabaseChannel do
 
   def handle_in("put", %{"reference" => reference, "value" => value}, socket) do
     case Exile.put(path(reference, socket), value) do
-      {:ok, value} -> {:reply, {:ok, %{result: "ok", reference: reference, value: value}}, socket}
+      :ok -> {:reply, {:ok, %{result: "ok", reference: reference}}, socket}
       {:error, reason} -> {:reply, {:ok, %{result: "error", reason: reason}}, socket}
     end
   end
