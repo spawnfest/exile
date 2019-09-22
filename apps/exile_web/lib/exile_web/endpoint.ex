@@ -1,9 +1,7 @@
 defmodule ExileWeb.Endpoint do
   use Phoenix.Endpoint, otp_app: :exile_web
-
-  socket "/socket", ExileWeb.UserSocket,
-    websocket: true,
-    longpoll: false
+  socket "/socket", ExileWeb.UserSocket
+  socket "/live", Phoenix.LiveView.Socket
 
   # Serve at "/" the static files from "priv/static" directory.
   #

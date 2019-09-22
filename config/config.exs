@@ -24,6 +24,7 @@ config :exile_auth,
 # Configures the endpoint
 config :exile_web, ExileWeb.Endpoint,
   url: [host: "localhost"],
+  live_view: [signing_salt: "IG9Dv+0Y"],
   secret_key_base: "zHGkHhadYHTeJLFoyelM6pB31vYPVkVybIcGvfvqD4xNyX/fA6VTxiyQNnyA2elX",
   render_errors: [view: ExileWeb.ErrorView, accepts: ~w(html json)],
   pubsub: [name: ExileWeb.PubSub, adapter: Phoenix.PubSub.PG2]
