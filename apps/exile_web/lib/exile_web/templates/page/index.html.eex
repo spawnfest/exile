@@ -5,6 +5,12 @@
         <div class="media-body">
           <h1>Exile</h1>
           <p>An extremely simple to use NoSQL store which follows REST-like resource locators known as paths to locate records and define relations between data.</p>
+          <p>
+            <a href="https://github.com/spawnfest/exile" target="_blank">
+              <i class="fab fa-github"></i>
+              GitHub
+            </a>
+          </p>
         </div>
         <img
           src="<%= Routes.static_path(@conn, "/images/exile.svg") %>"
@@ -56,7 +62,7 @@
     </div>
     <div class="col-3">
       <p>The <code>exile</code> global object has been set up for you in this interactive session, where objects are prefixed with <code><%= @prefix %>:</code>.</p>
-      <p>The API is asynchornous, but automatically resolved in-line for maximum bodging pleasure.</p>
+      <p>The API is asynchronous and based on Promises, which are automatically resolved inline for maximum bodging pleasure.</p>
       <hr/>
       <strong>Legend</strong>
       <ul>
