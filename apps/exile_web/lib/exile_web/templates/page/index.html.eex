@@ -16,14 +16,15 @@
   <div class="row">
     <div class="col-12">
       <h2>Try Exile</h2>
-      <p>Your Database Prefix is <code><%= @prefix %>.</code></p>
+      <p>Objects are prefixed with <code><%= @prefix %>:</code>.</p>
+      <p>Share the URL of this page with your friends to access objects with the same prefix.</p>
     </div>
   </div>
   <div class="row">
     <div class="col-9">
       <div class="card mb-4">
         <div class="card-header">
-          Bodgematic
+          Bodgematic 9000
         </div>
         <div class="card-body">
           <ul class="console-history">
@@ -35,16 +36,50 @@
       </div>
     </div>
     <div class="col-3">
-      <p>The <code>exile</code> global object has been set up for you in this interactive session. The API is asynchornous, but the Bodgematic Terminal automatically resolves them for you in-line.</p>
-      <h4>Get</h4>
-      <p><code>exile.get("/")</code></p>
-      <p><code>exile.get(reference)</code></p>
-      <h4>Post</h4>
-      <p><code>exile.post(reference, data)</code></p>
+      <p>The <code>exile</code> global object has been set up for you in this interactive session.</p>
+      <p>The API is asynchornous, but automatically resolved in-line for maximum bodging pleasure.</p>
     </div>
     <div class="col-3 d-none">
       <h3>Results</h3>
       <%= live_render(@conn, ExileWeb.ListLive, session: %{prefix: @prefix}) %>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-12">
+      <hr/>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-12">
+      <h2>Reference</h2>
+      <hr/>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-6">
+      <h3>Elixir API</h3>
+      <hr/>
+      Coming Soon
+    </div>
+    <div class="col-6">
+      <h3>JavaScript API</h3>
+      <hr/>
+      <h4>Setup</h4>
+      <p class="description">Creates a new Exile session and connects to the back-end.</p>
+      <p><pre>
+      // var db = new Database('/exile', {token: token});
+      // var post = db.put('/posts/', {text: 'hi'});
+      // var text = db.get(post.id); // 'hi'
+      </pre></p>
+      <h4>Get</h4>
+      <p class="description">Return a top-level object.</p>
+      <p><code>exile.get(reference)</code></p>
+      <h4>Post</h4>
+      <p class="description">Create (Update) a top-level object.</p>
+      <p><code>exile.post(reference, data)</code></p>
+      <h4>Put</h4>
+      <p class="description">Create (Update) a nested object.</p>
+      <p><code>exile.put(reference, data)</code></p>
     </div>
   </div>
 </div>
