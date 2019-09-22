@@ -41,6 +41,8 @@ config :exile_auth, ExileAuth.Guardian,
   issuer: "exile_auth",
   secret_key: "yYSAJxjltNf3Acl0FjsDjD0yp0X5kLGev4z2eTR2TLaKoURCJsdowKSVbniohREn"
 
-# Import environment specific config. This must remain at the bottom
-# of this file so it overrides the configuration defined above.
 import_config "#{Mix.env()}.exs"
+
+if File.exists?(Path.join([__DIR__, "#{Mix.env()}.secret.exs"])) do
+  import_config "#{Mix.env()}.secret.exs"
+end
