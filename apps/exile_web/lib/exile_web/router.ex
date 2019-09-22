@@ -19,14 +19,25 @@ defmodule ExileWeb.Router do
     get "/", PageController, :index
   end
 
+  pipeline :ensure_auth do
+    plug ExileWeb.Plug.AuthAccessPipeline
+  end
+
   # Other scopes may use custom stacks.
   scope "/api", ExileWeb do
     pipe_through :api
+
     scope "/auth" do
       get "/", AuthController, :test
       post "/login", AuthController, :login
     end
 
     put "/register", UserController, :create
+
+    scope "/store" do
+      pipe_through [:ensure_auth]
+      get "/*path", StoreController, :get
+      post "/*path", StoreController, :post
+    end
   end
 end

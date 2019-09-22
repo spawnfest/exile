@@ -22,7 +22,10 @@ defmodule ExileWeb.AuthController do
 end
 
 defmodule ExileWeb.Plug.AuthAccessPipeline do
-  use Guardian.Plug.Pipeline, otp_app: :exile_web
+  use Guardian.Plug.Pipeline,
+    module: ExileAuth.Guardian,
+    otp_app: :exile_web,
+    error_handler: ExileWeb.AuthErrorHandler
   
   # If there is a session token, restrict it to an access token and validate it
   plug Guardian.Plug.VerifySession, claims: %{"typ" => "access"}
