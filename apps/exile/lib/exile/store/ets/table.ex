@@ -102,7 +102,8 @@ defmodule Exile.Store.ETS.Table do
           {:ok, id}
 
         [{:type, _}, {:id, _}] ->
-          {:error, :cannot_create_record_on_attribute}
+          # Cannot create item on an attribute with POST
+          {:error, :unsupported_operation}
 
         [{:type, _root}, {:id, id} | accessors] ->
           # Read the root record
@@ -130,6 +131,9 @@ defmodule Exile.Store.ETS.Table do
             err ->
               err
           end
+
+        other_path ->
+          {:error, :unsupported_operation}
       end
 
     {:reply, res, state}
@@ -268,7 +272,8 @@ defmodule Exile.Store.ETS.Table do
         {:ok, Exile.Record.updated_row(new_record), new_row_item}
 
       false ->
-        {:error, :cannot_create_record_on_attribute}
+        # When target is not a list, cannot add to it
+        {:error, :unsupported_operation}
     end
   end
 end
