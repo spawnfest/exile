@@ -118,7 +118,7 @@ defmodule Exile.Store.ETS.Table do
                   %{id: id, ts: ts, value: body} = nested_row
 
                   Logger.debug(
-                    "#{log_prefix()} [POST] Inserted #{id} @ #{ts} @ #{path} with #{body}"
+                    "#{log_prefix()} [POST] Inserted #{id} @ #{ts} @ #{path} with #{inspect(body)}"
                   )
 
                   {:ok, id}
@@ -265,7 +265,7 @@ defmodule Exile.Store.ETS.Table do
         new_record = put_in(record, [:value | access_path], updated_list)
 
         # Return updated record
-        {:ok, Exile.Record.updated_row(%{record | value: new_record}), new_row_item}
+        {:ok, Exile.Record.updated_row(new_record), new_row_item}
 
       false ->
         {:error, :cannot_create_record_on_attribute}

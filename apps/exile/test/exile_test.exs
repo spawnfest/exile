@@ -38,10 +38,10 @@ defmodule ExileTest do
 
       comment = Jason.decode!(json)
       assert {:ok, comment_id} = Exile.post("posts/#{post_id}/comments", comment)
-      assert {:ok, [%{id: ^comment_id, value: ^comment}]} = Exile.get("posts/#{post_id}/comments")
+      assert {:ok, [%{id: comment_id, value: value}]} = Exile.get("posts/#{post_id}/comments")
 
       assert {:ok, %{id: ^comment_id, value: ^comment}} =
-               Exile.get("posts/#{post_id}/comments/#{comment_id}")
+        Exile.get("posts/#{post_id}/comments/#{comment_id}")
     after
       Exile.delete("posts")
     end
@@ -73,7 +73,7 @@ defmodule ExileTest do
       post = Jason.decode!(json)
       assert {:ok, post_id} = Exile.post("posts", post)
 
-      assert :cannot_create_record_on_attribute =
+      assert {:error, :cannot_create_record_on_attribute} =
                Exile.post("posts/#{post_id}/author", "someone_else")
     after
       Exile.delete("posts")
