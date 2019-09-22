@@ -4,27 +4,31 @@
     <meta charset="utf-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Exile · Phoenix Framework</title>
-    <link rel="stylesheet" href="<%= Routes.static_path(@conn, "/css/app.css") %>"/>
+    <title><%= assigns[:title] %></title>
+    <%= for stylesheet_path <- stylesheet_paths(assigns) do %>
+      <link rel="stylesheet" href="<%= stylesheet_path %>">
+    <% end %>
   </head>
   <body>
-    <header>
-      <section class="container">
-        <nav role="navigation">
-          <ul>
-            <li><a href="https://hexdocs.pm/phoenix/overview.html">Get Started</a></li>
-          </ul>
-        </nav>
-        <a href="http://phoenixframework.org/" class="phx-logo">
-          <img src="<%= Routes.static_path(@conn, "/images/phoenix.png") %>" alt="Phoenix Framework Logo"/>
-        </a>
-      </section>
-    </header>
-    <main role="main" class="container">
-      <p class="alert alert-info" role="alert"><%= get_flash(@conn, :info) %></p>
-      <p class="alert alert-danger" role="alert"><%= get_flash(@conn, :error) %></p>
-      <%= render @view_module, @view_template, assigns %>
-    </main>
-    <script type="text/javascript" src="<%= Routes.static_path(@conn, "/js/app.js") %>"></script>
+    <nav class="site-header sticky-top py-1">
+      <div class="container d-flex flex-column flex-md-row justify-content-between">
+        <a class="py-2" href="/"><strong>Exile</strong></a>
+        <a class="py-2 d-none d-md-inline-block" href="#"></a>
+      </div>
+    </nav>
+    <%= render @view_module, @view_template, assigns %>
+    <footer class="footer mt-auto py-3">
+      <div class="container">
+        <span class="text-muted">Presented by the Bodgemasters</span>
+      </div>
+    </footer>
+    <%= if assigns[:payload] do %>
+      <script type="application/json" id="payload">
+        <%= URI.encode(Jason.encode!(assigns[:payload])) %>
+      </script>
+    <% end %>
+    <%= for script_path <- script_paths(assigns) do %>
+      <script type="text/javascript" src="<%= script_path %>"></script>
+    <% end %>
   </body>
 </html>
