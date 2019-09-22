@@ -36,12 +36,44 @@ defmodule Exile.Store.ETS.Table do
   end
 
   def get(path) do
-    all =
-      path
-      |> table_name_for_path!()
-      |> :ets.tab2list()
+    case Exile.Path.parse(path) do
+      [type: _root] ->
+        all =
+          path
+          |> table_name_for_path!()
+          |> :ets.tab2list()
+          |> Enum.map(&row_to_record/1)
 
-    {:ok, all}
+        {:ok, all}
+
+      [type: _root, id: id] ->
+        rows =
+          path
+          |> table_name_for_path!()
+          |> :ets.lookup(id)
+
+        case rows do
+          [] ->
+            {:error, :not_found}
+
+          [row] ->
+            {:ok, row_to_record(row)}
+
+          rows ->
+            # We only want the one with the latest TS
+            newest =
+              rows
+              |> Enum.sort_by(&elem(&1, 1), &>=/2)
+              |> hd()
+              |> row_to_record()
+
+            # TODO When time travel options implemented this is done here
+            {:ok, newest}
+        end
+
+      _ ->
+        {:error, :not_found}
+    end
   rescue
     ArgumentError ->
       {:error, :not_found}
@@ -104,5 +136,13 @@ defmodule Exile.Store.ETS.Table do
 
   defp log_prefix() do
     "[#{__MODULE__}]"
+  end
+
+  defp row_to_record({id, ts, value}) do
+    %{
+      id: id,
+      ts: ts,
+      value: value
+    }
   end
 end

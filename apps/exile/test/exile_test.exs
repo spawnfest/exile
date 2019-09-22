@@ -38,8 +38,10 @@ defmodule ExileTest do
 
       comment = Jason.decode!(json)
       assert {:ok, comment_id} = Exile.post("posts/#{post_id}/comments", comment)
-      assert {:ok, [^comment]} = Exile.get("posts/#{post_id}/comments")
-      assert {:ok, ^comment} = Exile.get("posts/#{post_id}/comments/#{comment_id}")
+      assert {:ok, [%{id: ^comment_id, value: ^comment}]} = Exile.get("posts/#{post_id}/comments")
+
+      assert {:ok, %{id: ^comment_id, value: ^comment}} =
+               Exile.get("posts/#{post_id}/comments/#{comment_id}")
     after
       Exile.delete("posts")
     end
@@ -162,7 +164,7 @@ defmodule ExileTest do
 
       post = Jason.decode!(json)
       assert {:ok, post_id} = Exile.post("posts", post)
-      assert {:ok, [^post]} = Exile.get("posts")
+      assert {:ok, [%{id: ^post_id, ts: _, value: ^post}]} = Exile.get("posts")
     after
       Exile.delete("posts")
     end
@@ -178,7 +180,7 @@ defmodule ExileTest do
 
       post = Jason.decode!(json)
       assert {:ok, post_id} = Exile.post("posts", post)
-      assert {:ok, "holsee"} = Exile.get("posts")
+      assert {:ok, [%{id: ^post_id, ts: _, value: "holsee"}]} = Exile.get("posts")
     after
       Exile.delete("posts")
     end
