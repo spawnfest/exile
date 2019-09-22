@@ -38,7 +38,7 @@ defmodule ExileWeb.ListLive do
       </table>
     """
   end
-  
+
   def mount(session, socket) do
     reference = session.prefix <> ":" <> session.reference
     :ok = Exile.subscribe(reference, self())
@@ -75,7 +75,7 @@ defmodule ExileWeb.ListLive do
 
   defp path(reference, socket) do
     with true <- is_binary(reference),
-         [head|rest] <- Path.split(reference) do
+         [head | rest] <- Path.split(reference) do
       Path.join([socket.assigns.prefix <> ":" <> head | rest])
     else
       _ -> ""

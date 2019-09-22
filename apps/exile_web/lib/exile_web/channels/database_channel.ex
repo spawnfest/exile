@@ -4,7 +4,7 @@ defmodule ExileWeb.DatabaseChannel do
 
   def join("database:" <> prefix, %{"token" => token}, socket) do
     case ConnectionToken.verify(token) do
-      {:ok, %{prefix: ^prefix}} -> {:ok, assign(socket, :prefix,  prefix)}
+      {:ok, %{prefix: ^prefix}} -> {:ok, assign(socket, :prefix, prefix)}
       _ -> :error
     end
   end
@@ -49,13 +49,13 @@ defmodule ExileWeb.DatabaseChannel do
         value: value
       }
     }
-    
+
     push(socket, "event", data)
     {:noreply, socket}
-  end 
+  end
 
   defp path(reference, socket) do
-    [head|rest] = Path.split(reference)
+    [head | rest] = Path.split(reference)
     Path.join([socket.assigns.prefix <> ":" <> head | rest])
   end
 end
