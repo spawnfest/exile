@@ -5,7 +5,6 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
-const VueLoaderPlugin = require('vue-loader/lib/plugin');
 
 module.exports = (env, options) => ({
   optimization: {
@@ -75,10 +74,6 @@ module.exports = (env, options) => ({
             outputPath: '../images'
           }
         }]
-      },
-      {
-        test: /\.vue$/,
-        loader: 'vue-loader'
       }
     ]
   },
@@ -86,7 +81,6 @@ module.exports = (env, options) => ({
     new webpack.ProvidePlugin({$: 'jquery'}),
     new MiniCssExtractPlugin({ filename: '../css/[name].css' }),
     new CopyWebpackPlugin([{ from: 'images/', to: '../images/' }]),
-    new CopyWebpackPlugin([{ from: 'static/', to: '../' }]),
-    new VueLoaderPlugin()
+    new CopyWebpackPlugin([{ from: 'static/', to: '../' }])
   ]
 });

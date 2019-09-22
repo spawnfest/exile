@@ -10,6 +10,7 @@
     "watch": "webpack --mode development --watch"
   },
   "dependencies": {
+    "autoprefixer": "^9.6.1",
     "phoenix": "file:../../../deps/phoenix",
     "phoenix_html": "file:../../../deps/phoenix_html",
     "phoenix_live_view": "file:../../../deps/phoenix_live_view",
@@ -34,10 +35,6 @@
     "postcss-loader": "^3.0.0",
     "sass-loader": "^7.1.0",
     "uglifyjs-webpack-plugin": "^1.2.4",
-    "vue": "^2.5.17",
-    "vue-loader": "^15.4.2",
-    "vue-template-compiler": "^2.5.17",
-    "vueify": "^9.4.1",
     "webpack": "^4.23.1",
     "webpack-cli": "^3.1.2"
   }
