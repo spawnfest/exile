@@ -255,7 +255,9 @@ defmodule Exile.Store.ETS.Table do
         idx -> List.delete_at(state.subscribers, idx)
       end
 
-    Logger.debug("#{log_prefix()} [SUBSCRIPTION] Subscriber down #{inspect(pid)}, removing subscription.")
+    Logger.debug(
+      "#{log_prefix()} [SUBSCRIPTION] Subscriber down #{inspect(pid)}, removing subscription."
+    )
 
     {:noreply, %{state | subscribers: subscribers}}
   end

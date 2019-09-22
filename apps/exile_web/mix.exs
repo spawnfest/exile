@@ -30,7 +30,7 @@ defmodule ExileWeb.MixProject do
   defp deps do
     [
       {:exile, in_umbrella: true},
-      {:elixir_uuid,  "~> 1.2.0"},
+      {:elixir_uuid, "~> 1.2.0"},
       {:phoenix, "~> 1.4.9"},
       {:phoenix_pubsub, "~> 1.1"},
       {:phoenix_ecto, "~> 4.0"},
