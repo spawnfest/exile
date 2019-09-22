@@ -1,0 +1,14 @@
+@import "preamble";
+
+html, body {
+  height: 100%;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+}
+
+footer {
+  background-color: #f5f5f5;
+}

@@ -1,24 +1,43 @@
 {
+  "engines": {
+    "node": ">= 12.5.0",
+    "npm": ">= 6.9.0"
+  },
+  "license": "UNLICENSED",
   "repository": {},
-  "license": "MIT",
   "scripts": {
     "deploy": "webpack --mode production",
     "watch": "webpack --mode development --watch"
   },
   "dependencies": {
     "phoenix": "file:../../../deps/phoenix",
-    "phoenix_html": "file:../../../deps/phoenix_html"
+    "phoenix_html": "file:../../../deps/phoenix_html",
+    "phoenix_live_view": "file:../../../deps/phoenix_live_view"
   },
   "devDependencies": {
     "@babel/core": "^7.0.0",
     "@babel/preset-env": "^7.0.0",
+    "@fortawesome/fontawesome-free": "^5.3.1",
     "babel-loader": "^8.0.0",
+    "bootstrap": "^4.3.1",
     "copy-webpack-plugin": "^4.5.0",
-    "css-loader": "^2.1.1",
+    "css-element-queries": "^1.1.1",
+    "css-loader": "^3.2.0",
+    "file-loader": "^2.0.0",
+    "jquery": "^3.4.1",
+    "jquery.scrollto": "^2.1.2",
     "mini-css-extract-plugin": "^0.4.0",
-    "optimize-css-assets-webpack-plugin": "^4.0.0",
+    "node-sass": "^4.12.0",
+    "optimize-css-assets-webpack-plugin": "^5.0.3",
+    "popper.js": "^1.14.4",
+    "postcss-loader": "^3.0.0",
+    "sass-loader": "^7.1.0",
     "uglifyjs-webpack-plugin": "^1.2.4",
-    "webpack": "4.4.0",
-    "webpack-cli": "^2.0.10"
+    "vue": "^2.5.17",
+    "vue-loader": "^15.4.2",
+    "vue-template-compiler": "^2.5.17",
+    "vueify": "^9.4.1",
+    "webpack": "^4.23.1",
+    "webpack-cli": "^3.1.2"
   }
 }
