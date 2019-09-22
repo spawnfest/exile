@@ -75,6 +75,10 @@ defmodule Exile.Store.ETS.Table do
     GenServer.call(table_ref(path), {:subscribe, path, subscriber})
   end
 
+  def unsubscribe(path, subscriber) do
+    GenServer.call(table_ref(path), {:unsubscribe, path, subscriber})
+  end
+
   @doc false
   def start_link(args) do
     id = args
@@ -211,8 +215,49 @@ defmodule Exile.Store.ETS.Table do
 
   @impl GenServer
   def handle_call({:subscribe, path, subscriber}, _, state) do
-    new_subscribers = [%{path: path, address: subscriber} | state.subscribers]
+    monitor_ref = Process.monitor(subscriber)
+
+    new_subscribers = [
+      %{path: path, address: subscriber, monitor_ref: monitor_ref} | state.subscribers
+    ]
+
     {:reply, :ok, %{state | subscribers: new_subscribers}}
+  end
+
+  @impl GenServer
+  def handle_call({:unsubscribe, path, subscriber}, _, state) do
+    subscribers =
+      case Enum.find_index(state.subscribers, &(&1.path == path && &1.address == subscriber)) do
+        nil ->
+          state.subscribers
+
+        idx ->
+          subscriber = Enum.at(state.subscribers, idx)
+          Process.demonitor(subscriber.monitor_ref)
+
+          Logger.debug(
+            "#{log_prefix()} [UNSUBSCRIBE] Removing subscription to #{subscriber.path} @ #{
+              inspect(subscriber.address)
+            }."
+          )
+
+          List.delete_at(state.subscribers, idx)
+      end
+
+    {:reply, :ok, %{state | subscribers: subscribers}}
+  end
+
+  @impl GenServer
+  def handle_info({:DOWN, monitor_ref, :process, pid, _}, state) do
+    subscribers =
+      case Enum.find_index(state.subscribers, &(&1.monitor_ref == monitor_ref)) do
+        nil -> state.subscribers
+        idx -> List.delete_at(state.subscribers, idx)
+      end
+
+    Logger.debug("#{log_prefix()} [SUBSCRIPTION] Subscriber down #{inspect(pid)}, removing subscription.")
+
+    {:noreply, %{state | subscribers: subscribers}}
   end
 
   defp table_name_for_path!(path) do

@@ -33,8 +33,8 @@ defmodule Exile.Store.ETS do
   end
 
   @impl Exile.Store
-  def unsubscribe(_path, _subscriber) do
-    :not_implemented
+  def unsubscribe(path, subscriber) do
+    Table.unsubscribe(path, subscriber)
   end
 
   @impl Exile.Store
