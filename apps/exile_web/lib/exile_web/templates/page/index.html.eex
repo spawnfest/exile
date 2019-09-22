@@ -1,11 +1,50 @@
 <div class="container pt-4">
   <div class="row">
     <div class="col-12">
-      <h1>Exile</h1>
-      <p>An extremely simple to use NoSQL store which follows REST-like resource locators known as paths to locate records and define relations between data.</p>
-      <hr/>
+      <div class="media">
+        <div class="media-body">
+          <h1>Exile</h1>
+          <p>An extremely simple to use NoSQL store which follows REST-like resource locators known as paths to locate records and define relations between data.</p>
+        </div>
+        <img
+          src="<%= Routes.static_path(@conn, "/images/exile.svg") %>"
+          style="width: 8em; height: 8em"></img>
+      </div>
+    </div>
+  </div>
+  <hr/>
+  <div class="row">
+    <div class="col-12">
       <h2>Try Exile</h2>
       <p>Your Database Prefix is <code><%= @prefix %>.</code></p>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-9">
+      <div class="card">
+        <div class="card-header">
+          Bodgematic
+        </div>
+        <div class="card-body">
+          <ul class="console-history">
+          </ul>
+          <form class="console-form">
+            <input type="text" name="command" placeholder="command" autofocus></input>
+          </form>
+        </div>
+      </div>
+    </div>
+    <div class="col-3">
+      <p>The <code>exile</code> global object has been set up for you in this interactive session.</p>
+      <h4>Get</h4>
+      <p><code>exile.get("/")</code></p>
+      <p><code>exile.get(reference)</code></p>
+      <h4>Post</h4>
+      <p><code>exile.post(reference, data)</code></p>
+    </div>
+    <div class="col-3 d-none">
+      <h3>Results</h3>
+      <%= live_render(@conn, ExileWeb.ListLive, session: %{prefix: @prefix}) %>
     </div>
   </div>
 </div>
