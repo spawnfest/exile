@@ -20,7 +20,13 @@ defmodule ExileWeb.Router do
   end
 
   # Other scopes may use custom stacks.
-  # scope "/api", ExileWeb do
-  #   pipe_through :api
-  # end
+  scope "/api", ExileWeb do
+    pipe_through :api
+    scope "/auth" do
+      get "/", AuthController, :test
+      post "/login", AuthController, :login
+    end
+
+    put "/register", UserController, :create
+  end
 end
