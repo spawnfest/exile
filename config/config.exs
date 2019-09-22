@@ -17,9 +17,14 @@ config :exile_web,
   ecto_repos: [Exile.Repo],
   generators: [context_app: :exile]
 
+config :exile_auth,
+  ecto_repos: [ExileAuth.Repo],
+  generators: [context_app: :exile_auth]
+
 # Configures the endpoint
 config :exile_web, ExileWeb.Endpoint,
   url: [host: "localhost"],
+  live_view: [signing_salt: "IG9Dv+0Y"],
   secret_key_base: "zHGkHhadYHTeJLFoyelM6pB31vYPVkVybIcGvfvqD4xNyX/fA6VTxiyQNnyA2elX",
   render_errors: [view: ExileWeb.ErrorView, accepts: ~w(html json)],
   pubsub: [name: ExileWeb.PubSub, adapter: Phoenix.PubSub.PG2]
@@ -32,6 +37,13 @@ config :logger, :console,
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
 
-# Import environment specific config. This must remain at the bottom
-# of this file so it overrides the configuration defined above.
+# Configure Guardian secret for generating JWTs
+config :exile_auth, ExileAuth.Guardian,
+  issuer: "exile_auth",
+  secret_key: "yYSAJxjltNf3Acl0FjsDjD0yp0X5kLGev4z2eTR2TLaKoURCJsdowKSVbniohREn"
+
 import_config "#{Mix.env()}.exs"
+
+if File.exists?(Path.join([__DIR__, "#{Mix.env()}.secret.exs"])) do
+  import_config "#{Mix.env()}.secret.exs"
+end

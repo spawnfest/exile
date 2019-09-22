@@ -37,15 +37,19 @@ defmodule ExileWeb.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
+      {:exile, in_umbrella: true},
+      {:exile_auth, in_umbrella: true},
+      {:elixir_uuid,  "~> 1.2.0"},
       {:phoenix, "~> 1.4.9"},
       {:phoenix_pubsub, "~> 1.1"},
       {:phoenix_ecto, "~> 4.0"},
       {:phoenix_html, "~> 2.11"},
       {:phoenix_live_reload, "~> 1.2", only: :dev},
+      {:phoenix_live_view, "~> 0.3.0"},
       {:gettext, "~> 0.11"},
-      {:exile, in_umbrella: true},
       {:jason, "~> 1.0"},
-      {:plug_cowboy, "~> 2.0"}
+      {:plug_cowboy, "~> 2.0"},
+      {:guardian, "~> 1.2"}
     ]
   end
 
