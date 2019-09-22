@@ -35,6 +35,10 @@ defmodule Exile.Store.ETS.Table do
     GenServer.call(table_ref(path), {:post, path, record})
   end
 
+  def put(path, record) do
+    GenServer.call(table_ref(path), {:put, path, record})
+  end
+
   def get(path) do
     case Exile.Path.parse(path) do
       [type: _root] ->
@@ -132,7 +136,55 @@ defmodule Exile.Store.ETS.Table do
               err
           end
 
-        other_path ->
+        _ ->
+          # Top Level Collections supported only
+          {:error, :unsupported_operation}
+      end
+
+    {:reply, res, state}
+  end
+
+  @impl GenServer
+  def handle_call({:put, path, record}, _, state) do
+    res =
+      case Exile.Path.parse(path) do
+        [{:type, _root}] ->
+          # Cannot update top level
+          {:error, :unsupported_operation}
+
+        [{:type, _}, {:id, _}] ->
+          # TODO Update a record at an ID
+          {:error, :not_implemented}
+
+        [{:type, _root}, {:id, id} | accessors] ->
+          # TODO Update an attribute on a record
+          # Read the root record
+          case get_root_record_by_id(path, id) do
+            {:ok, root_parent} ->
+              # Try to insert value into target path
+              case update_attribute(root_parent, accessors, record) do
+                {:ok, updated_parent} ->
+                  # Insert updated parent row
+                  :ets.insert(state.table_name, updated_parent)
+
+                  {id, ts, body} = updated_parent
+
+                  Logger.debug(
+                    "#{log_prefix()} [PUT] Inserted #{id} @ #{ts} @ #{path} with #{inspect(body)}"
+                  )
+
+                  :ok
+
+                err ->
+                  err
+              end
+
+            err ->
+              err
+          end
+
+        _ ->
+          # Top Level Collections supported only
           {:error, :unsupported_operation}
       end
 
@@ -214,13 +266,17 @@ defmodule Exile.Store.ETS.Table do
     do_access_value(record.value, accessors)
   end
 
+  def do_access_value(:not_found, _) do
+    {:error, :not_found}
+  end
+
   def do_access_value(value, []) do
     {:ok, value}
   end
 
   def do_access_value(value, [{:type, type} | rest]) when is_map(value) do
     value
-    |> Map.get(type)
+    |> Map.get(type, :not_found)
     |> do_access_value(rest)
   end
 
@@ -275,5 +331,14 @@ defmodule Exile.Store.ETS.Table do
         # When target is not a list, cannot add to it
         {:error, :unsupported_operation}
     end
+  end
+
+  def update_attribute(record, [{:type, type}] = _accessors, new_value) do
+    # TODO walk the path to the value
+    access_path = [type]
+    new_record = put_in(record, [:value | access_path], new_value)
+
+    # Return updated record
+    {:ok, Exile.Record.updated_row(new_record)}
   end
 end

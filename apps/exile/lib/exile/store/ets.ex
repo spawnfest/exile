@@ -18,8 +18,8 @@ defmodule Exile.Store.ETS do
   end
 
   @impl Exile.Store
-  def put(_path, _record) do
-    :not_implemented
+  def put(path, record) do
+    Table.put(path, record)
   end
 
   @impl Exile.Store
