@@ -21,8 +21,16 @@ defmodule Exile.Record do
   def row(record) do
     {
       Exile.Id.generate(),
-      :erlang.system_time(:nanosecond),
+      now(),
       record
     }
+  end
+
+  def updated_row(%{id: id, value: value}) do
+    {id, now(), value}
+  end
+
+  defp now() do
+    :erlang.system_time(:nanosecond)
   end
 end

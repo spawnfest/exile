@@ -12,6 +12,7 @@ defmodule Exile.PathTest do
   describe "parse" do
     test "should build paths" do
       id = Exile.Id.generate()
+
       cases = [
         {"/posts", [type: "posts"]},
         {"posts", [type: "posts"]},

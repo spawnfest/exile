@@ -129,7 +129,7 @@ defmodule ExileTest do
       assert {:ok, post_id} = Exile.post("posts", post)
       assert :ok = Exile.delete("posts/#{post_id}")
       assert {:error, :not_found} = Exile.get("posts/#{post_id}")
-      assert {:ok, []} = Exile.get("posts")
+      assert {:error, :not_found} = Exile.get("posts")
     after
       Exile.delete("posts")
     end
@@ -180,7 +180,7 @@ defmodule ExileTest do
 
       post = Jason.decode!(json)
       assert {:ok, post_id} = Exile.post("posts", post)
-      assert {:ok, [%{id: ^post_id, ts: _, value: "holsee"}]} = Exile.get("posts")
+      assert {:ok, "holsee"} = Exile.get("posts/#{post_id}/author")
     after
       Exile.delete("posts")
     end

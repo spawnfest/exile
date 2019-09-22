@@ -7,6 +7,9 @@ defmodule Exile.Store.ETS.Table.Registry do
     end
   end
 
+  @doc "Reference used to access process."
+  @type ref :: String.t()
+
   @doc "Child Specification for `#{__MODULE__}`"
   @spec child_spec :: map()
   def child_spec() do
@@ -16,7 +19,7 @@ defmodule Exile.Store.ETS.Table.Registry do
     }
   end
 
-  @spec via_registry(Cola.Form.ref()) :: tuple()
+  @spec via_registry(ref) :: tuple()
   def via_registry(ref) do
     {:via, Registry, {@registry_name, ref}}
   end

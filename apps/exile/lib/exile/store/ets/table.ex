@@ -46,29 +46,13 @@ defmodule Exile.Store.ETS.Table do
 
         {:ok, all}
 
-      [type: _root, id: id] ->
-        rows =
-          path
-          |> table_name_for_path!()
-          |> :ets.lookup(id)
+      [_root, {:id, id}] ->
+        get_root_record_by_id(path, id)
 
-        case rows do
-          [] ->
-            {:error, :not_found}
-
-          [row] ->
-            {:ok, row_to_record(row)}
-
-          rows ->
-            # We only want the one with the latest TS
-            newest =
-              rows
-              |> Enum.sort_by(&elem(&1, 1), &>=/2)
-              |> hd()
-              |> row_to_record()
-
-            # TODO When time travel options implemented this is done here
-            {:ok, newest}
+      [_root, {:id, id} | accessors] ->
+        case get_root_record_by_id(path, id) do
+          {:ok, record} ->
+            access_value(record, accessors)
         end
 
       _ ->
@@ -103,13 +87,52 @@ defmodule Exile.Store.ETS.Table do
   end
 
   @impl GenServer
-  def handle_call({:post, _path, record}, _, state) do
-    row = Exile.Record.row(record)
-    true = :ets.insert_new(state.table_name, row)
-    {id, ts, body} = row
-    Logger.debug("#{log_prefix()} [POST] Inserted #{id} @ #{ts} with #{inspect(body)}.")
-    # TODO raise event
-    {:reply, {:ok, id}, state}
+  def handle_call({:post, path, record}, _, state) do
+    res =
+      case Exile.Path.parse(path) do
+        [{:type, _root}] ->
+          row = Exile.Record.row(record)
+          true = :ets.insert_new(state.table_name, row)
+          {id, ts, body} = row
+
+          Logger.debug(
+            "#{log_prefix()} [POST] Inserted #{id} @ #{ts} @ #{path} with #{inspect(body)}."
+          )
+
+          {:ok, id}
+
+        [{:type, _}, {:id, _}] ->
+          {:error, :cannot_create_record_on_attribute}
+
+        [{:type, _root}, {:id, id} | accessors] ->
+          # Read the root record
+          case get_root_record_by_id(path, id) do
+            {:ok, root_parent} ->
+              # Try to insert value into target path
+              case insert_value(root_parent, accessors, record) do
+                {:ok, updated_parent, nested_row} ->
+                  # Insert updated parent row
+                  :ets.insert(state.table_name, updated_parent)
+
+                  # Note: nested rows are maps
+                  %{id: id, ts: ts, value: body} = nested_row
+
+                  Logger.debug(
+                    "#{log_prefix()} [POST] Inserted #{id} @ #{ts} @ #{path} with #{body}"
+                  )
+
+                  {:ok, id}
+
+                err ->
+                  err
+              end
+
+            err ->
+              err
+          end
+      end
+
+    {:reply, res, state}
   end
 
   @impl GenServer
@@ -144,5 +167,108 @@ defmodule Exile.Store.ETS.Table do
       ts: ts,
       value: value
     }
+  end
+
+  defp get_root_record_by_id(path, id, opts \\ :newest) do
+    rows =
+      path
+      |> table_name_for_path!()
+      |> :ets.lookup(id)
+
+    case rows do
+      [] ->
+        {:error, :not_found}
+
+      [row] ->
+        {:ok, row_to_record(row)}
+
+      rows ->
+        case opts do
+          :newest ->
+            # We only want the one with the latest TS
+            newest =
+              rows
+              |> Enum.sort_by(&elem(&1, 1), &>=/2)
+              |> hd()
+              |> row_to_record()
+
+            {:ok, newest}
+
+          :all ->
+            # TODO When time travel options implemented this is done here
+            all_revisions =
+              rows
+              |> Enum.sort_by(&elem(&1, 1), &>=/2)
+              |> Enum.map(&row_to_record/1)
+
+            {:ok, all_revisions}
+        end
+    end
+  end
+
+  def access_value(record, accessors) do
+    do_access_value(record.value, accessors)
+  end
+
+  def do_access_value(value, []) do
+    {:ok, value}
+  end
+
+  def do_access_value(value, [{:type, type} | rest]) when is_map(value) do
+    value
+    |> Map.get(type)
+    |> do_access_value(rest)
+  end
+
+  def do_access_value(value, [{:id, _id} | _rest]) when is_map(value) do
+    raise "Access Error: Cannot access map by id"
+  end
+
+  def do_access_value(value, [{:id, id} | rest]) when is_list(value) do
+    case Enum.filter(value, &(&1.id == id)) do
+      [item] ->
+        item
+        |> do_access_value(rest)
+
+      _ ->
+        :not_found
+    end
+  end
+
+  def do_access_value(value, [{:type, _type} | _rest]) when is_list(value) do
+    raise "Access Error: Cannot access list by type"
+  end
+
+  def do_access_value(value, [{:type, _type}]) when is_number(value) or is_binary(value) do
+    value
+  end
+
+  def do_access_value(value, [{:type, type}]) when is_map(value) do
+    Map.get(value, type)
+  end
+
+  ##
+  # INSERTS
+  ##
+
+  def insert_value(record, [{:type, type}] = _accessors, new_value) do
+    # TODO walk the path to the value
+    access_path = [type]
+    value = get_in(record.value, access_path)
+
+    # Check it is a list
+    case is_list(value) do
+      true ->
+        # Add item
+        new_row_item = Exile.Record.row(new_value) |> row_to_record()
+        updated_list = [new_row_item | value]
+        new_record = put_in(record, [:value | access_path], updated_list)
+
+        # Return updated record
+        {:ok, Exile.Record.updated_row(%{record | value: new_record}), new_row_item}
+
+      false ->
+        {:error, :cannot_create_record_on_attribute}
+    end
   end
 end
