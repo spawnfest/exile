@@ -15,8 +15,19 @@ channel.join();
 socket.connect();
 
 window.exile = {
-  get: (reference) => {
-    return {value: "placeholder"};
+  push: function (channel, message, params) {
+    return new Promise((resolve, reject) => {
+      channel.push(message, params)
+        .receive("ok", data => resolve(data))
+        .receive("error", reason => reject(reason))
+        .receive("timeout", (() => reject("timeout")));
+    });
+  },
+  get: function (reference) {
+    return this.push(channel, "get", {reference: reference});
+  },
+  post: function (reference, value) {
+    return this.push(channel, "post", {reference: reference, value: value});
   }
 };
 
@@ -29,6 +40,7 @@ var consoleAppend = (message, className) => {
   item.classList.add(className);
   item.innerText = message;
   consoleHistoryElement.append(item);
+  return item;
 };
 
 consoleFormElement.addEventListener("submit", (event) => {
@@ -37,7 +49,17 @@ consoleFormElement.addEventListener("submit", (event) => {
   setTimeout(() => {
     try {
       var result = eval('(' + command + ')');
-      consoleAppend(StringifyObject(result, {indent: '  '}), 'response');
+      if (Promise.resolve(result) == result) {
+        var item = consoleAppend('Promise (Pending…)', 'response');
+        result.then((result) => {
+          item.innerText = StringifyObject(result, {indent: '  '});
+        }, (reason) => {
+          item.innerText = StringifyObject(reason, {indent: '  '});
+          item.classList.add('error');
+        });
+      } else {
+        consoleAppend(StringifyObject(result, {indent: '  '}), 'response');
+      }
     } catch (error) {
       consoleAppend(error, 'error');
     }
@@ -51,5 +73,10 @@ console.log = function (message) {
   consoleAppend(message, 'log');
   consoleLog.apply(console, arguments);
 };
+
+var defaultCallback = (result) => {
+  consoleAppend("Received: ", 'log');
+  consoleAppend(StringifyObject(result, {indent: '  '}), 'log');
+}
 
 console.log('Hello World');

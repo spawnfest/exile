@@ -21,7 +21,7 @@
   </div>
   <div class="row">
     <div class="col-9">
-      <div class="card">
+      <div class="card mb-4">
         <div class="card-header">
           Bodgematic
         </div>
@@ -29,13 +29,13 @@
           <ul class="console-history">
           </ul>
           <form class="console-form">
-            <input type="text" name="command" placeholder="command" autofocus></input>
+            <input type="text" name="command" placeholder="command" autocomplete="off" autofocus></input>
           </form>
         </div>
       </div>
     </div>
     <div class="col-3">
-      <p>The <code>exile</code> global object has been set up for you in this interactive session.</p>
+      <p>The <code>exile</code> global object has been set up for you in this interactive session. The API is asynchornous, but the Bodgematic Terminal automatically resolves them for you in-line.</p>
       <h4>Get</h4>
       <p><code>exile.get("/")</code></p>
       <p><code>exile.get(reference)</code></p>

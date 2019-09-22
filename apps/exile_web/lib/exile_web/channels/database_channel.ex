@@ -11,20 +11,16 @@ defmodule ExileWeb.DatabaseChannel do
 
   def handle_in("get", %{"reference" => reference}, socket) do
     case Exile.get(path(reference, socket)) do
-      {:ok, value} -> push(socket, "ok", %{reference: reference, value: value})
-      {:error, reason} -> push(socket, "error", %{reason: reason})
+      {:ok, value} -> {:reply, {:ok, %{result: "ok", reference: reference, value: value}}, socket}
+      {:error, reason} -> {:reply, {:ok, %{result: "error", reason: reason}}, socket}
     end
-
-    {:noreply, socket}
   end
 
   def handle_in("post", %{"reference" => reference, "value" => value}, socket) do
     case Exile.post(path(reference, socket), value) do
-      {:ok, value} -> push(socket, "ok", %{reference: reference, value: value})
-      {:error, reason} -> push(socket, "error", %{reason: reason})
+      {:ok, value} -> {:reply, {:ok, %{result: "ok", reference: reference, value: value}}, socket}
+      {:error, reason} -> {:reply, {:ok, %{result: "error", reason: reason}}, socket}
     end
-
-    {:noreply, socket}
   end
 
   defp path(reference, socket) do
