@@ -15,6 +15,11 @@ defmodule ExileWeb.AuthController do
     |> put_status(200)
     |> json(%{token: token})
   end
+
+  defp login_reply(err, conn) do
+    conn
+    |> ExileWeb.AuthErrorHandler.auth_error(err, %{})
+  end
 end
 
 defmodule ExileWeb.Plug.AuthAccessPipeline do
@@ -32,7 +37,7 @@ defmodule ExileWeb.Plug.AuthAccessPipeline do
   plug Guardian.Plug.LoadResource, allow_blank: true
 end
 
-defmodule ExileWeb.UserManager.ErrorHandler do
+defmodule ExileWeb.AuthErrorHandler do
   import Plug.Conn
 
   @behaviour Guardian.Plug.ErrorHandler
@@ -42,6 +47,6 @@ defmodule ExileWeb.UserManager.ErrorHandler do
     body = to_string(type)
     conn
     |> put_resp_content_type("text/plain")
-    |> send_resp(401, body)
+    |> send_resp(401, "Authentication failed: #{body}")
   end
 end
