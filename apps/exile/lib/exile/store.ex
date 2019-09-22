@@ -17,7 +17,9 @@ defmodule Exile.Store do
   @callback put(Path.t(), Record.t()) :: :ok | {:error, Exile.put_error_reason()}
   @callback delete(Path.t()) :: {:ok, Record.t()} | {:error, Exile.delete_error_reason()}
   @callback subscribe(Path.t(), Subscriber.t()) :: :ok | {:error, Exile.subscribe_error_reason()}
-  @callback unsubscribe(Path.t(), Subscriber.t()) :: :ok | {:error, Exile.unsubscribe_error_reason()}
+  @callback unsubscribe(Path.t(), Subscriber.t()) ::
+              :ok | {:error, Exile.unsubscribe_error_reason()}
+  @callback child_specs() :: [Supervisor.child_spec()]
 
   @doc "Return the record(s) at the path."
   @spec get(t(), Path.t()) :: {:ok, Record.t()} | {:error, Exile.get_error_reason()}
@@ -41,7 +43,7 @@ defmodule Exile.Store do
   @doc "Remove record at path."
   @spec delete(t(), Path.t()) :: {:ok, Record.t()} | {:error, Exile.delete_error_reason()}
   def delete(store, path) when is_atom(store) do
-    store.get(path)
+    store.delete(path)
   end
 
   @doc "Subscribe to events at path."
@@ -55,5 +57,11 @@ defmodule Exile.Store do
           :ok | {:error, Exile.unsubscribe_error_reason()}
   def unsubscribe(store, path, subscriber) when is_atom(store) do
     store.unsubscribe(path, subscriber)
+  end
+
+  @doc "Child specifications of processes used in the storage implementation"
+  @spec child_specs(t()) :: [Supervisor.child_spec()]
+  def child_specs(store) do
+    store.child_specs()
   end
 end

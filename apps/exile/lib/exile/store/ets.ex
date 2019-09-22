@@ -3,16 +3,18 @@ defmodule Exile.Store.ETS do
   An ETS backed implementation of an `Exile.Store`.
   """
 
+  alias Exile.Store.ETS.Table
+
   @behaviour Exile.Store
 
   @impl Exile.Store
-  def get(_path) do
-    :not_implemented
+  def get(path) do
+    Table.get(path)
   end
 
   @impl Exile.Store
-  def post(_path, _record) do
-    :not_implemented
+  def post(path, record) do
+    Table.post(path, record)
   end
 
   @impl Exile.Store
@@ -21,8 +23,8 @@ defmodule Exile.Store.ETS do
   end
 
   @impl Exile.Store
-  def delete(_path) do
-    :not_implemented
+  def delete(path) do
+    Table.delete(path)
   end
 
   @impl Exile.Store
@@ -34,13 +36,14 @@ defmodule Exile.Store.ETS do
   def unsubscribe(_path, _subscriber) do
     :not_implemented
   end
-end
 
-defmodule Exile.Store.ETS.Root do
-end
+  @impl Exile.Store
+  def child_specs() do
+    alias Exile.Store.ETS.Table.{Supervisor, Registry}
 
-defmodule Exile.Store.ETS.Root.Registry do
-end
-
-defmodule Exile.Store.ETS.Root.Supervisor do
+    [
+      Supervisor.child_spec(),
+      Registry.child_spec()
+    ]
+  end
 end

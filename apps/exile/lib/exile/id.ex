@@ -10,4 +10,12 @@ defmodule Exile.Id do
 
   @spec generate :: t()
   def generate(), do: Ecto.UUID.generate()
+
+  @spec is_id?(t()) :: boolean()
+  def is_id?(id) do
+    case Ecto.UUID.cast(id) do
+      {:ok, _} -> true
+      _ -> false
+    end
+  end
 end

@@ -35,7 +35,7 @@ defmodule Exile do
   @doc "Remove record at path."
   @spec delete(Path.t()) :: {:ok, Record.t()} | {:error, delete_error_reason}
   def delete(path) do
-    Store.get(store(), path)
+    Store.delete(store(), path)
   end
 
   @doc "Subscribe to events at path."
@@ -50,5 +50,11 @@ defmodule Exile do
   def unsubscribe(path, subscriber \\ nil) do
     subscriber = subscriber || self()
     Store.unsubscribe(store(), path, subscriber)
+  end
+
+  @doc "Child specifications of processes used by exile"
+  @spec child_specs() :: [Supervisor.child_spec()]
+  def child_specs() do
+    Store.child_specs(store())
   end
 end
