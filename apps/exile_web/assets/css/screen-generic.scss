@@ -29,6 +29,8 @@ pre, code {
   padding-bottom: 0.25em;
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
   white-space: pre;
+  overflow-x: auto;
+  max-width: 100%;
 }
 
 .console-history li.request {
@@ -70,4 +72,12 @@ pre, code {
 
 .console-shortcuts li {
   border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+input.form-control[name="reference"],
+input.form-control[name="command"] {
+  font-family: monospace;
+  word-wrap: break-word;
+  word-break: break-all;
+  font-size: 1.25em;
 }
