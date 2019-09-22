@@ -58,10 +58,10 @@ Directly via the IEX session. See Docs: `doc/Exile.html#content`
 
 An example scenario:
 
-Using Exile to create a blog completely in client JS, 
+Using Exile to create a blog completely in client JS,
 submit and edit posts and have them visible to all sessions,
 and have `comments` instantly appear in a live fashion in all sessions,
-WITHOUT ANY SERVER SIDE CODE 😍 
+WITHOUT ANY SERVER SIDE CODE 😍
 
 ### API
 
@@ -141,19 +141,21 @@ Exile.get('posts')
 elixir: get a specific comment
 ``` elixir
 Exile.get("posts/#{post_id}/comments/#{comment_id}")
-#=> 
+#=>
 {:ok, %{"author" => "bran", "body" => "Lorem ipsum"}}
 ```
 
 elixir: get a specific comment author
 ``` elixir
 Exile.get("posts/#{post_id}/comments/#{comment_id}")
-#=> 
+#=>
 {:ok, "bran"}
 ```
 
 javascript: get all posts
 ```js
+exile.get('posts')
+//=>
 {
   reference: 'posts',
   result: 'ok',
@@ -239,7 +241,7 @@ elixir: subscribe to posts, get update event
 ```elixir
 subscriber_address = self()
 Exile.subscribe("posts", subscriber_address)
-#=> 
+#=>
 :ok
 
 #when post is created or updated receive event:
@@ -266,12 +268,12 @@ flush()
 javascript: subscribe to posts, get new item event
 ```js
 exile.subscribe('posts')
-#=> 
+#=>
 {
   result: 'ok'
 }
 
-# when post is created receive event 
+# when post is created receive event
 #=>
 {
   event_type: 'new',
