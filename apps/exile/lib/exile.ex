@@ -7,7 +7,7 @@ defmodule Exile do
   alias Exile.{Record, Id, Path, Store, Subscriber}
 
   @type get_error_reason :: :not_found
-  @type post_error_reason :: :cannot_create_record_on_attribute | :non_existant_path
+  @type post_error_reason :: :unsupported_operation
   @type put_error_reason :: :not_found
   @type delete_error_reason :: :not_found
   @type subscribe_error_reason :: :not_found | :not_implemented

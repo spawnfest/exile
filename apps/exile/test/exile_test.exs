@@ -45,7 +45,7 @@ defmodule ExileTest do
       Exile.delete("posts")
     end
 
-    test "should return :non_existant_path when path does not exist to point of creation" do
+    test "should return :unsupported_operation when path does not exist to point of creation" do
       json = """
       {
         "author": "bran",
@@ -55,12 +55,12 @@ defmodule ExileTest do
 
       comment = Jason.decode!(json)
 
-      assert {:ok, :non_existant_path} = Exile.post("foos/bars/", comment)
+      assert {:error, :unsupported_operation} = Exile.post("foos/bars/", comment)
     after
       Exile.delete("posts")
     end
 
-    test "should return :cannot_create_record_on_attribute when trying to post to existing attribute" do
+    test "should return :unsupported_operation when trying to post to existing attribute" do
       json = """
       {
         "author": "holsee",
@@ -72,7 +72,7 @@ defmodule ExileTest do
       post = Jason.decode!(json)
       assert {:ok, post_id} = Exile.post("posts", post)
 
-      assert {:error, :cannot_create_record_on_attribute} =
+      assert {:error, :unsupported_operation} =
                Exile.post("posts/#{post_id}/author", "someone_else")
     after
       Exile.delete("posts")
