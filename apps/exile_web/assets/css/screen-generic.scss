@@ -13,6 +13,10 @@ footer {
   background-color: #f5f5f5;
 }
 
+pre, code {
+  white-space: pre-line;
+}
+
 .console-history {
   list-style: none;
   padding: 0;
@@ -23,43 +27,47 @@ footer {
 .console-history li {
   padding-top: 0.25em;
   padding-bottom: 0.25em;
-  border-bottom: 1px solid rgb(200, 200, 200);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
   white-space: pre;
 }
 
 .console-history li.request {
-//  &:before {
-//    content: '> ';
-//    color: rgb(200, 200, 200);
-//  }
   color: black;
 }
 
 .console-history li.response {
-//  &:before {
-//    content: '  ';
-//    color: rgb(200, 200, 200);
-//  }
   color: blue;
 }
 
+.console-history li.message {
+  color: green;
+}
+
 .console-history li.error {
-//  &:before {
-//    content: '! ';
-//    color: rgb(200, 200, 200);
-//  }
   color: red;
 }
 
 .console-history li.log {
-  &:before {
-    content: '… ';
-    color: rgb(200, 200, 200);
-  }
   color: gray;
 }
 
 .console-form input {
   width: 100%;
   font-family: monospace;
+  word-wrap: break-word;
+  word-break: break-all;
+}
+
+.console-shortcuts {
+  list-style: none;
+  padding: 0;
+}
+
+.console-shortcuts li {
+  margin-top: 1em;
+  padding-top: 1em;
+}
+
+.console-shortcuts li {
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
 }

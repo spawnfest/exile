@@ -12,6 +12,10 @@ var socket = new Socket("/socket", {});
 var channel = socket.channel(`database:${payload.prefix}`, {token: payload.token});
 
 channel.join();
+channel.on("event", event => {
+  consoleAppend(StringifyObject(event, {indent: '  '}), 'message');
+});
+
 socket.connect();
 
 window.exile = {
@@ -31,6 +35,9 @@ window.exile = {
   },
   put: function (reference, value) {
     return this.push(channel, "post", {reference: reference, value: value});
+  },
+  subscribe: function (reference, value) {
+    return this.push(channel, "subscribe", {reference: reference});
   }
 };
 
@@ -46,6 +53,16 @@ var consoleAppend = (message, className) => {
   return item;
 };
 
+var consoleLogPromise = function (promise) {
+  var item = consoleAppend('Promise (Pending…)', 'response');
+  promise.then((result) => {
+    item.innerText = StringifyObject(result, {indent: '  '});
+  }, (reason) => {
+    item.innerText = StringifyObject(reason, {indent: '  '});
+    item.classList.add('error');
+  });
+}
+
 consoleFormElement.addEventListener("submit", (event) => {
   var command = event.target.elements["command"].value;
   consoleAppend(command, 'request');
@@ -53,13 +70,7 @@ consoleFormElement.addEventListener("submit", (event) => {
     try {
       var result = eval('(' + command + ')');
       if (Promise.resolve(result) == result) {
-        var item = consoleAppend('Promise (Pending…)', 'response');
-        result.then((result) => {
-          item.innerText = StringifyObject(result, {indent: '  '});
-        }, (reason) => {
-          item.innerText = StringifyObject(reason, {indent: '  '});
-          item.classList.add('error');
-        });
+        consoleLogPromise(result);
       } else {
         consoleAppend(StringifyObject(result, {indent: '  '}), 'response');
       }
@@ -80,6 +91,65 @@ console.log = function (message) {
 var defaultCallback = (result) => {
   consoleAppend("Received: ", 'log');
   consoleAppend(StringifyObject(result, {indent: '  '}), 'log');
+}
+
+window.shortcut_subscribe_post = function () {
+  consoleHistoryElement.querySelectorAll('*').forEach(function(node) {
+    node.remove();
+  });
+
+  console.log('Shortcut: Subscribe to `posts`');
+  var promise = exile.subscribe('posts');
+  consoleAppend("1> exile.subscribe('posts')");
+  consoleLogPromise(promise);
+}
+
+window.shortcut_get_posts = function () {
+  consoleHistoryElement.querySelectorAll('*').forEach(function(node) {
+    node.remove();
+  });
+
+  console.log('Shortcut: Get Posts');
+  var promise = exile.get('posts');
+  consoleAppend("1> exile.get('posts')");
+  consoleLogPromise(promise);
+}
+
+window.shortcut_create_post = function () {
+  consoleHistoryElement.querySelectorAll('*').forEach(function(node) {
+    node.remove();
+  });
+
+  console.log('Shortcut: Create Post');
+  var promise = exile.post('posts', {title: 'Hello World', comments: []});
+  consoleAppend("1> exile.post('posts', {title: 'Hello World', comments: []})", 'command');
+  promise.then((data) => {
+    var promise = exile.get(`posts/${data.value}`);
+    consoleAppend("2> exile.get(`posts/${data.value}`)", 'command');
+    consoleLogPromise(promise);
+  });
+  consoleLogPromise(promise);
+}
+
+window.shortcut_create_post_comment = function () {
+  consoleHistoryElement.querySelectorAll('*').forEach(function(node) {
+    node.remove();
+  });
+
+  console.log('Shortcut: Create Post & Comment');
+  var promise = exile.post('posts', {title: 'Hello World', comments: []});
+  consoleAppend("1> exile.post('posts', {title: 'Hello World', comments: []})", 'command');
+  promise.then((post) => {
+    var promise = exile.post(`posts/${post.value}/comments`, {content: 'Hello World!'});
+    consoleAppend("2> exile.post(`posts/${post.value}/comments`, {content: 'Hello World!'})", 'command');
+    consoleLogPromise(promise);
+    promise.then((data) => {
+      var promise = exile.get(`posts/${post.value}`);
+      consoleAppend("3> exile.get(`posts/${post.value}`)", 'command');
+      consoleLogPromise(promise);
+    });
+  });
+  consoleLogPromise(promise);
 }
 
 console.log('Hello World');

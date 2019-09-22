@@ -16,13 +16,12 @@
   <div class="row">
     <div class="col-12">
       <h2>Try Exile</h2>
-      <p>Objects are prefixed with <code><%= @prefix %>:</code>.</p>
       <p>Share the URL of this page with your friends to access objects with the same prefix.</p>
     </div>
   </div>
   <div class="row">
     <div class="col-9">
-      <div class="card mb-4">
+      <div class="card">
         <div class="card-header">
           Bodgematic 9000
         </div>
@@ -30,56 +29,66 @@
           <ul class="console-history">
           </ul>
           <form class="console-form">
-            <input type="text" name="command" placeholder="command" autocomplete="off" autofocus></input>
+            <input type="text" name="command" placeholder="command" autocomplete="off" value="exile.post('posts', {title: 'Hello World', comments: []})" autofocus></input>
           </form>
         </div>
       </div>
     </div>
     <div class="col-3">
-      <p>The <code>exile</code> global object has been set up for you in this interactive session.</p>
+      <p>The <code>exile</code> global object has been set up for you in this interactive session, where objects are prefixed with <code><%= @prefix %>:</code>.</p>
       <p>The API is asynchornous, but automatically resolved in-line for maximum bodging pleasure.</p>
+      <hr/>
+      <strong>Legend</strong>
+      <ul>
+        <li>Black: Request</li>
+        <li>Blue: Response</li>
+        <li>Green: Message</li>
+        <li>Red: Error</li>
+      </ul>
+      <hr/>
+      <strong>Quick Access</strong>
+      <ul class="console-shortcuts">
+        <li>
+          <p>
+            <a href="javascript:shortcut_subscribe_post()" class="btn btn-primary">Subscribe</a>
+          </p>
+          <p class="small text-secondary description">
+            <i class="fa fa-info-circle"></i>
+            Sets up subscription for entire <code>posts</code>. Note that the environment is not cleaned up between shortcut runs, so you may observe subscriptions firing when you try other comamnds.
+          </p>
+        </li>
+        <li>
+          <p>
+            <a href="javascript:shortcut_get_posts()" class="btn btn-primary">List Posts</a>
+          </p>
+          <p class="small text-secondary description">
+            <i class="fa fa-info-circle"></i>
+            Returns all known Posts.
+          </p>
+        </li>
+        <li>
+          <p>
+            <a href="javascript:shortcut_create_post()" class="btn btn-primary">Create Post</a>
+          </p>
+          <p class="small text-secondary description">
+            <i class="fa fa-info-circle"></i>
+            Creates a new Post entity with no Comments and returns it.
+          </p>
+        </li>
+        <li>
+          <p>
+            <a href="javascript:shortcut_create_post_comment()" class="btn btn-primary">Create Post & Comment</a>
+          </p>
+          <p class="small text-secondary description">
+            <i class="fa fa-info-circle"></i>
+            Creates a new Post entity with a Comment, and returns the Post.
+          </p>
+        </li>
+      </ul>
     </div>
     <div class="col-3 d-none">
       <h3>Results</h3>
       <%= live_render(@conn, ExileWeb.ListLive, session: %{prefix: @prefix}) %>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-12">
-      <hr/>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-12">
-      <h2>Reference</h2>
-      <hr/>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-6">
-      <h3>Elixir API</h3>
-      <hr/>
-      Coming Soon
-    </div>
-    <div class="col-6">
-      <h3>JavaScript API</h3>
-      <hr/>
-      <h4>Setup</h4>
-      <p class="description">Creates a new Exile session and connects to the back-end.</p>
-      <p><pre>
-      // var db = new Database('/exile', {token: token});
-      // var post = db.put('/posts/', {text: 'hi'});
-      // var text = db.get(post.id); // 'hi'
-      </pre></p>
-      <h4>Get</h4>
-      <p class="description">Return a top-level object.</p>
-      <p><code>exile.get(reference)</code></p>
-      <h4>Post</h4>
-      <p class="description">Create (Update) a top-level object.</p>
-      <p><code>exile.post(reference, data)</code></p>
-      <h4>Put</h4>
-      <p class="description">Create (Update) a nested object.</p>
-      <p><code>exile.put(reference, data)</code></p>
     </div>
   </div>
 </div>
