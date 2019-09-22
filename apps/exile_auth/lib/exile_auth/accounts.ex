@@ -102,6 +102,11 @@ defmodule ExileAuth.Accounts do
     User.changeset(user, %{})
   end
 
+  @spec authenticate_user(String.t, String.t) :: {:ok, %User{}} | {:error, :invalid_credentials}
+  @doc """
+  Checks whether username and password matches credentials stored in the
+  database.
+  """
   def authenticate_user(username, password) do
     query = from u in User, where: u.username == ^username
     case Repo.one(query) do
@@ -109,8 +114,6 @@ defmodule ExileAuth.Accounts do
         Bcrypt.no_user_verify()
         {:error, :invalid_credentials}
       user ->
-        IO.puts(user.password)
-        IO.puts(user.password_hash)
         if Bcrypt.verify_pass(password, user.password_hash) do
           {:ok, user}
         else
