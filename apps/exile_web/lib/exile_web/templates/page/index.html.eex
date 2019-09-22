@@ -28,7 +28,7 @@
   <div class="row">
     <div class="col-9">
       <div class="card">
-        <div class="card-header">
+        <div class="card-header sticky-top">
           <ul class="nav nav-pills nav-justified" role="tablist">
             <li class="nav-item">
               <a class="nav-link active" data-toggle="tab" href=".tab-pane-console">
@@ -49,8 +49,12 @@
             <div class="tab-pane-console tab-pane show active">
               <ul class="console-history">
               </ul>
-              <form class="console-form">
-                <input type="text" name="command" placeholder="command" autocomplete="off" value="exile.post('posts', {title: 'Hello World', comments: []})" autofocus></input>
+              <form class="console-form d-flex align-items-center">
+                <div class="mr-4 text-nowrap">
+                  Command
+                  <i class="fas fa-chevron-right"></i>
+                </div>
+                <input class="form-control" type="text" name="command" placeholder="command" autocomplete="off" value="exile.post('posts', {title: 'Hello World', comments: []})" autofocus></input>
               </form>
             </div>
             <div class="tab-pane-data tab-pane">
@@ -65,61 +69,64 @@
       <p>The API is asynchronous and based on Promises, which are automatically resolved inline for maximum bodging pleasure.</p>
       <hr/>
       <strong>Legend</strong>
-      <ul>
-        <li>Black: Request</li>
-        <li style="color: blue">Blue: Response</li>
-        <li style="color: green">Green: Message</li>
-        <li style="color: red">Red: Error</li>
-      </ul>
       <hr/>
-      <strong>Quick Access</strong>
-      <ul class="console-shortcuts">
-        <li>
-          <p>
-            <a href="javascript:shortcut_subscribe_post()" class="btn btn-primary">Subscribe</a>
-          </p>
-          <p class="small text-secondary description">
-            <i class="fa fa-info-circle"></i>
-            Sets up subscription for entire <code>posts</code>. Note that the environment is not cleaned up between shortcut runs, so you may observe subscriptions firing when you try other comamnds.
-          </p>
-        </li>
-        <li>
-          <p>
-            <a href="javascript:shortcut_get_posts()" class="btn btn-primary">List Posts</a>
-          </p>
-          <p class="small text-secondary description">
-            <i class="fa fa-info-circle"></i>
-            Returns all known Posts.
-          </p>
-        </li>
-        <li>
-          <p>
-            <a href="javascript:shortcut_create_post()" class="btn btn-primary">Create Post</a>
-          </p>
-          <p class="small text-secondary description">
-            <i class="fa fa-info-circle"></i>
-            Creates a new Post entity with no Comments and returns it.
-          </p>
-        </li>
-        <li>
-          <p>
-            <a href="javascript:shortcut_create_post_comment()" class="btn btn-primary">Create Post & Comment</a>
-          </p>
-          <p class="small text-secondary description">
-            <i class="fa fa-info-circle"></i>
-            Creates a new Post entity with a Comment, and returns the Post.
-          </p>
-        </li>
-        <li>
-          <p>
-            <a href="javascript:shortcut_create_update_post()" class="btn btn-primary">Create & Update Post</a>
-          </p>
-          <p class="small text-secondary description">
-            <i class="fa fa-info-circle"></i>
-            Creates a new Post entity, updates it and returns it.
-          </p>
-        </li>
+      <ul>
+        <li><strong>Black:</strong> Request</li>
+        <li style="color: blue"><strong>Blue:</strong> Response</li>
+        <li style="color: green"><strong>Green:</strong> Message</li>
+        <li style="color: red"><strong>Red:</strong> Error</li>
       </ul>
+      <div class="sticky-top">
+        <hr/>
+        <strong>Quick Access</strong>
+        <ul class="console-shortcuts">
+          <li>
+            <p>
+              <a href="javascript:shortcut_subscribe_post()" class="btn btn-primary">Subscribe</a>
+            </p>
+            <p class="small text-secondary description">
+              <i class="fa fa-info-circle"></i>
+              Sets up subscription for entire <code>posts</code>. Note that the environment is not cleaned up between shortcut runs, so you may observe subscriptions firing when you try other comamnds.
+            </p>
+          </li>
+          <li>
+            <p>
+              <a href="javascript:shortcut_get_posts()" class="btn btn-primary">List Posts</a>
+            </p>
+            <p class="small text-secondary description">
+              <i class="fa fa-info-circle"></i>
+              Returns all known Posts.
+            </p>
+          </li>
+          <li>
+            <p>
+              <a href="javascript:shortcut_create_post()" class="btn btn-primary">Create Post</a>
+            </p>
+            <p class="small text-secondary description">
+              <i class="fa fa-info-circle"></i>
+              Creates a new Post entity with no Comments and returns it.
+            </p>
+          </li>
+          <li>
+            <p>
+              <a href="javascript:shortcut_create_post_comment()" class="btn btn-primary">Create Post & Comment</a>
+            </p>
+            <p class="small text-secondary description">
+              <i class="fa fa-info-circle"></i>
+              Creates a new Post entity with a Comment, and returns the Post.
+            </p>
+          </li>
+          <li>
+            <p>
+              <a href="javascript:shortcut_create_update_post()" class="btn btn-primary">Create & Update Post</a>
+            </p>
+            <p class="small text-secondary description">
+              <i class="fa fa-info-circle"></i>
+              Creates a new Post entity, updates it and returns it.
+            </p>
+          </li>
+        </ul>
+      </div>
     </div>
   </div>
 </div>
