@@ -18,7 +18,6 @@ defmodule ExileAuth.Guardian do
   # Fetches the resource that is represented by claims.
   # For JWT this would normally be found in the sub field.
   def resource_from_claims(%{"sub" => id}) do
-    IO.puts(IO.inspect(id))
     case Accounts.get_user!(id) do
       nil -> {:error, :resource_not_found}
       user -> {:ok, user}
