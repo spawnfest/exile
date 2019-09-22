@@ -1,20 +1,30 @@
-# The directory Mix will write compiled artifacts to.
-/_build/
-
-# If you run "mix test --cover", coverage assets end up here.
-/cover/
-
-# The directory Mix downloads your dependencies sources to.
-/deps/
-
-# Where 3rd-party dependencies like ExDoc output generated docs.
-/doc/
-
-# Ignore .fetch files in case you like to edit your project deps locally.
-/.fetch
-
-# If the VM crashes, it generates a dump, let's ignore it too.
-erl_crash.dump
-
-# Also ignore archive artifacts (built via "mix archive.build").
+.DS_Store
+*.beam
 *.ez
+/*.ez
+/.fetch
+/apps/*/cover
+/apps/exile_web/assets/node_modules
+/apps/exile_web/assets/.fontcustom-manifest.json
+/apps/exile_web/priv/static/
+!/apps/exile_web/priv/static/.keep
+/config/*.env
+/config/*.secret.exs
+/cover
+/db
+/deps
+/doc
+/infra/aws-keypair.*
+/infra/aws-secrets.*
+!/infra/aws-secrets.sh
+/infra/aws-stack-parameters.*
+!/infra/aws-stack-parameters.sh
+/infra/seeds.*.exs
+/priv/cert/*
+/priv/keys/*
+/releases
+/_build
+erl_crash.dump
+npm-debug.log
+.idea/
+*.iml
