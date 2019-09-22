@@ -224,10 +224,10 @@ defmodule Exile.Store.ETS.Table do
     raise "Access Error: Cannot access map by id"
   end
 
-  def do_access_value(value, [{:id, id} | rest]) when is_list(value) do
+  def do_access_value([%{id: _} | _] = value, [{:id, id} | rest]) when is_list(value) do
     case Enum.filter(value, &(&1.id == id)) do
       [item] ->
-        item
+        item.value
         |> do_access_value(rest)
 
       _ ->

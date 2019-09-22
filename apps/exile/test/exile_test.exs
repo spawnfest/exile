@@ -40,8 +40,7 @@ defmodule ExileTest do
       assert {:ok, comment_id} = Exile.post("posts/#{post_id}/comments", comment)
       assert {:ok, [%{id: comment_id, value: value}]} = Exile.get("posts/#{post_id}/comments")
 
-      assert {:ok, %{id: ^comment_id, value: ^comment}} =
-        Exile.get("posts/#{post_id}/comments/#{comment_id}")
+      assert {:ok, ^comment} = Exile.get("posts/#{post_id}/comments/#{comment_id}")
     after
       Exile.delete("posts")
     end
