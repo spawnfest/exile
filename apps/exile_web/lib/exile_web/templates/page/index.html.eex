@@ -23,14 +23,34 @@
     <div class="col-9">
       <div class="card">
         <div class="card-header">
-          Bodgematic 9000
+          <ul class="nav nav-pills nav-justified" role="tablist">
+            <li class="nav-item">
+              <a class="nav-link active" data-toggle="tab" href=".tab-pane-console">
+                <i class="fas fa-terminal"></i>
+                Console
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" data-toggle="tab" href=".tab-pane-data">
+                <i class="fas fa-table"></i>
+                Data
+              </a>
+            </li>
+          </ul>
         </div>
         <div class="card-body">
-          <ul class="console-history">
-          </ul>
-          <form class="console-form">
-            <input type="text" name="command" placeholder="command" autocomplete="off" value="exile.post('posts', {title: 'Hello World', comments: []})" autofocus></input>
-          </form>
+          <div class="tab-content">
+            <div class="tab-pane-console tab-pane show active">
+              <ul class="console-history">
+              </ul>
+              <form class="console-form">
+                <input type="text" name="command" placeholder="command" autocomplete="off" value="exile.post('posts', {title: 'Hello World', comments: []})" autofocus></input>
+              </form>
+            </div>
+            <div class="tab-pane-data tab-pane">
+              <%= live_render(@conn, ExileWeb.ListLive, session: %{prefix: @prefix, reference: "posts"}) %>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -41,9 +61,9 @@
       <strong>Legend</strong>
       <ul>
         <li>Black: Request</li>
-        <li>Blue: Response</li>
-        <li>Green: Message</li>
-        <li>Red: Error</li>
+        <li style="color: blue">Blue: Response</li>
+        <li style="color: green">Green: Message</li>
+        <li style="color: red">Red: Error</li>
       </ul>
       <hr/>
       <strong>Quick Access</strong>
@@ -84,11 +104,16 @@
             Creates a new Post entity with a Comment, and returns the Post.
           </p>
         </li>
+        <li>
+          <p>
+            <a href="javascript:shortcut_create_update_post()" class="btn btn-primary">Create & Update Post</a>
+          </p>
+          <p class="small text-secondary description">
+            <i class="fa fa-info-circle"></i>
+            Creates a new Post entity, updates it and returns it.
+          </p>
+        </li>
       </ul>
-    </div>
-    <div class="col-3 d-none">
-      <h3>Results</h3>
-      <%= live_render(@conn, ExileWeb.ListLive, session: %{prefix: @prefix}) %>
     </div>
   </div>
 </div>
