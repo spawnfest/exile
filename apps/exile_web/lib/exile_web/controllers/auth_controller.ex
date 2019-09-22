@@ -9,7 +9,6 @@ defmodule ExileWeb.AuthController do
   end
 
   defp login_reply({:ok, user}, conn) do
-    IO.puts(user.id)
     {:ok, token, _claims} = ExileAuth.Guardian.encode_and_sign(user, %{})
     conn
     |> put_status(200)
