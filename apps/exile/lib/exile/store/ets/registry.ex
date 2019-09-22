@@ -7,7 +7,7 @@ defmodule Exile.Store.ETS.Table.Registry do
     end
   end
 
-  @doc "Reference used to access process."
+  @typedoc "Reference used to access process."
   @type ref :: String.t()
 
   @doc "Child Specification for `#{__MODULE__}`"
