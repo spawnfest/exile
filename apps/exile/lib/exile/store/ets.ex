@@ -28,8 +28,8 @@ defmodule Exile.Store.ETS do
   end
 
   @impl Exile.Store
-  def subscribe(_path, _subscriber) do
-    :not_implemented
+  def subscribe(path, subscriber) do
+    Table.subscribe(path, subscriber)
   end
 
   @impl Exile.Store
