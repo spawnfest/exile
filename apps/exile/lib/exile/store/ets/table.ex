@@ -71,6 +71,10 @@ defmodule Exile.Store.ETS.Table do
     GenServer.call(table_ref(path), {:delete, path})
   end
 
+  def subscribe(path, subscriber) do
+    GenServer.call(table_ref(path), {:subscribe, path, subscriber})
+  end
+
   @doc false
   def start_link(args) do
     id = args
@@ -87,7 +91,7 @@ defmodule Exile.Store.ETS.Table do
       |> table_name_from_ref()
       |> :ets.new(@table_opts)
 
-    {:ok, %{table_name: table_name}}
+    {:ok, %{table_name: table_name, subscribers: []}}
   end
 
   @impl GenServer
@@ -97,6 +101,7 @@ defmodule Exile.Store.ETS.Table do
         [{:type, _root}] ->
           row = Exile.Record.row(record)
           true = :ets.insert_new(state.table_name, row)
+          notify_subscribers(state.subscribers, path, :new, row)
           {id, ts, body} = row
 
           Logger.debug(
@@ -118,6 +123,7 @@ defmodule Exile.Store.ETS.Table do
                 {:ok, updated_parent, nested_row} ->
                   # Insert updated parent row
                   :ets.insert(state.table_name, updated_parent)
+                  notify_subscribers(state.subscribers, path, :new, updated_parent)
 
                   # Note: nested rows are maps
                   %{id: id, ts: ts, value: body} = nested_row
@@ -166,6 +172,7 @@ defmodule Exile.Store.ETS.Table do
                 {:ok, updated_parent} ->
                   # Insert updated parent row
                   :ets.insert(state.table_name, updated_parent)
+                  notify_subscribers(state.subscribers, path, :update, updated_parent)
 
                   {id, ts, body} = updated_parent
 
@@ -200,6 +207,12 @@ defmodule Exile.Store.ETS.Table do
 
     Logger.debug("#{log_prefix()} [DELETE] path: #{path}.")
     {:stop, :normal, :ok, state}
+  end
+
+  @impl GenServer
+  def handle_call({:subscribe, path, subscriber}, _, state) do
+    new_subscribers = [%{path: path, address: subscriber} | state.subscribers]
+    {:reply, :ok, %{state | subscribers: new_subscribers}}
   end
 
   defp table_name_for_path!(path) do
@@ -333,6 +346,10 @@ defmodule Exile.Store.ETS.Table do
     end
   end
 
+  ##
+  # Updates
+  ##
+
   def update_attribute(record, [{:type, type}] = _accessors, new_value) do
     # TODO walk the path to the value
     access_path = [type]
@@ -340,5 +357,20 @@ defmodule Exile.Store.ETS.Table do
 
     # Return updated record
     {:ok, Exile.Record.updated_row(new_record)}
+  end
+
+  ##
+  # Subscriptions
+  ##
+
+  def notify_subscribers(subcribers, path, event_type, record) do
+    listeners =
+      subcribers
+      |> Enum.filter(&String.starts_with?(path, &1.path))
+      |> Enum.map(& &1.address)
+
+    for listener <- listeners do
+      send(listener, {:exile_event, {event_type, path, record}})
+    end
   end
 end

@@ -192,4 +192,32 @@ defmodule ExileTest do
       Exile.delete("posts")
     end
   end
+
+  describe "subscribe" do
+    test "should subscribe to change events on record" do
+      subscriber =
+        Task.async(fn ->
+          receive do
+            msg -> msg
+          end
+        end)
+
+      :ok = Exile.subscribe("posts", subscriber.pid)
+
+      json = """
+      {
+        "author": "holsee",
+        "tags": ["bill", "ted", "rufus", "beethoven"],
+        "comments": []
+      }
+      """
+
+      post = Jason.decode!(json)
+      path = "posts"
+      assert {:ok, post_id} = Exile.post(path, post)
+
+      assert {:exile_event, {:new, ^path, {_id, _ts, ^post}}} = Task.await(subscriber)
+    end
+  end
+
 end
