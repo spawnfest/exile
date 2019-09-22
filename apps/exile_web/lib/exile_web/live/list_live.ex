@@ -6,7 +6,7 @@ defmodule ExileWeb.ListLive do
       <form phx-change="update">
         <div class="form-group">
           <label for="reference">Reference</label>
-          <input class="form-control" type="text" name="reference" value="<%= @reference %>">
+          <input class="form-control" type="text" name="reference" value="<%= @reference %>" autocomplete="off">
           </input>
         </div>
       </form>
@@ -47,24 +47,43 @@ defmodule ExileWeb.ListLive do
   end
 
   def handle_info({:exile_event, {:new, _, {id, ts, value}}}, socket) do
+    # FIXME: value is top-level object if subscription is on path
     entry = %{id: id, ts: ts, value: value}
     entries = [entry | socket.assigns.entries]
     {:noreply, assign(socket, entries: entries)}
   end
 
-  def handle_info({:exile_event, {:update, _, {id, ts, value}}}, socket) do
+  def handle_info({:exile_event, {:update, p, {id, ts, value}}}, socket) do
+    # FIXME: value is top-level object if subscription is on path
     entry = %{id: id, ts: ts, value: value}
     entries = put_in(socket.assigns.entries, [Access.filter(& &1.id == id)], entry)
     {:noreply, assign(socket, entries: entries)}
   end
-  
+
+  def handle_event("update", %{"reference" => ""}, socket) do
+    :ok = Exile.unsubscribe(path(socket.assigns.reference, socket))
+    {:noreply, assign(socket, reference: nil, entries: [])}
+  end
+
   def handle_event("update", %{"reference" => reference}, socket) do
-    :ok = Exile.unsubscribe(socket.assigns.prefix <> ":" <> socket.assigns.reference)
+    if is_binary(socket.assigns.reference) do
+      :ok = Exile.unsubscribe(path(socket.assigns.reference, socket))
+    end
+
     :ok = Exile.subscribe(socket.assigns.prefix <> ":" <> reference)
-    
-    case Exile.get(socket.assigns.prefix <> ":" <> reference) do
-      {:ok, entries} -> {:noreply, assign(socket, reference: reference, entries: entries)}
+
+    case Exile.get(path(reference, socket)) do
+      {:ok, entries} when is_list(entries) -> {:noreply, assign(socket, reference: reference, entries: entries)}
       _ -> {:noreply, assign(socket, reference: reference, entries: [])}
+    end
+  end
+
+  defp path(reference, socket) do
+    with true <- is_binary(reference),
+         [head|rest] <- Path.split(reference) do
+      Path.join([socket.assigns.prefix <> ":" <> head | rest])
+    else
+      _ -> ""
     end
   end
 end
