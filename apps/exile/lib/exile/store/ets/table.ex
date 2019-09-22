@@ -9,7 +9,7 @@ defmodule Exile.Store.ETS.Table do
   require Logger
 
   @server __MODULE__
-  @table_opts [:set, :protected]
+  @table_opts [:set, :protected, :named_table, read_concurrency: true]
 
   @doc false
   def child_spec(table_ref) do
@@ -35,6 +35,22 @@ defmodule Exile.Store.ETS.Table do
     GenServer.call(table_ref(path), {:post, path, record})
   end
 
+  def get(path) do
+    all =
+      path
+      |> table_name_for_path!()
+      |> :ets.tab2list()
+
+    {:ok, all}
+  rescue
+    ArgumentError ->
+      {:error, :not_found}
+  end
+
+  def delete(path) do
+    GenServer.call(table_ref(path), {:delete, path})
+  end
+
   @doc false
   def start_link(args) do
     id = args
@@ -44,12 +60,11 @@ defmodule Exile.Store.ETS.Table do
   @doc false
   @impl GenServer
   def init(table_ref) do
-    Logger.debug("[id: #{table_ref}] New Table created.")
+    Logger.debug("#{log_prefix()} [INIT] New Table created @ #{table_ref}")
 
-    # We may wish to limit the number of ETS table per node
     table_name =
       table_ref
-      |> String.to_atom()
+      |> table_name_from_ref()
       |> :ets.new(@table_opts)
 
     {:ok, %{table_name: table_name}}
@@ -63,6 +78,28 @@ defmodule Exile.Store.ETS.Table do
     Logger.debug("#{log_prefix()} [POST] Inserted #{id} @ #{ts} with #{inspect(body)}.")
     # TODO raise event
     {:reply, {:ok, id}, state}
+  end
+
+  @impl GenServer
+  def handle_call({:delete, path}, _, state) do
+    # This is deleting at root level
+    path
+    |> table_name_for_path!()
+    |> :ets.delete()
+
+    Logger.debug("#{log_prefix()} [DELETE] path: #{path}.")
+    {:stop, :normal, :ok, state}
+  end
+
+  defp table_name_for_path!(path) do
+    path
+    |> Exile.Path.to_ref()
+    |> String.to_existing_atom()
+  end
+
+  defp table_name_from_ref(table_ref) do
+    table_ref
+    |> String.to_atom()
   end
 
   defp log_prefix() do

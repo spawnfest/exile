@@ -43,7 +43,7 @@ defmodule Exile.Store do
   @doc "Remove record at path."
   @spec delete(t(), Path.t()) :: {:ok, Record.t()} | {:error, Exile.delete_error_reason()}
   def delete(store, path) when is_atom(store) do
-    store.get(path)
+    store.delete(path)
   end
 
   @doc "Subscribe to events at path."

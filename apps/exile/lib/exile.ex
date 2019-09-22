@@ -35,7 +35,7 @@ defmodule Exile do
   @doc "Remove record at path."
   @spec delete(Path.t()) :: {:ok, Record.t()} | {:error, delete_error_reason}
   def delete(path) do
-    Store.get(store(), path)
+    Store.delete(store(), path)
   end
 
   @doc "Subscribe to events at path."

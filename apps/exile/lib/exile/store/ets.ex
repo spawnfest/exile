@@ -8,8 +8,8 @@ defmodule Exile.Store.ETS do
   @behaviour Exile.Store
 
   @impl Exile.Store
-  def get(_path) do
-    :not_implemented
+  def get(path) do
+    Table.get(path)
   end
 
   @impl Exile.Store
@@ -23,8 +23,8 @@ defmodule Exile.Store.ETS do
   end
 
   @impl Exile.Store
-  def delete(_path) do
-    :not_implemented
+  def delete(path) do
+    Table.delete(path)
   end
 
   @impl Exile.Store
