@@ -4,7 +4,7 @@ defmodule ExileAuth.Accounts do
   """
 
   import Ecto.Query, warn: false
-  alias Exile.Repo
+  alias ExileAuth.Repo
 
   alias ExileAuth.Accounts.User
 

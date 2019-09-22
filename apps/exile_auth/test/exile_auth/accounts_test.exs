@@ -1,5 +1,5 @@
 defmodule ExileAuth.AccountsTest do
-  use Exile.DataCase
+  use ExileAuth.DataCase
 
   alias ExileAuth.Accounts
 

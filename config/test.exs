@@ -8,6 +8,13 @@ config :exile, Exile.Repo,
   hostname: "localhost",
   pool: Ecto.Adapters.SQL.Sandbox
 
+config :exile_auth, ExileAuth.Repo,
+  username: "postgres",
+  password: "postgres",
+  database: "exile_auth_test",
+  hostname: "localhost",
+  pool: Ecto.Adapters.SQL.Sandbox
+
 # We don't run a server during test. If one is required,
 # you can enable the server option below.
 config :exile_web, ExileWeb.Endpoint,

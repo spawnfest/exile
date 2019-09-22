@@ -1,7 +1,4 @@
-# TODO I have not figured out how to keep this file located here and still have
-# it run against Exile.Repo
-# SHOULD THIS STAY HERE OR STAY IN THE REPOS IN THE exile APP?
-defmodule Exile.Repo.Migrations.CreateUsers do
+defmodule ExileAuth.Repo.Migrations.CreateUsers do
   use Ecto.Migration
 
   def change do
