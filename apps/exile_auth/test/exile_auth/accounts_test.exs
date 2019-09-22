@@ -68,5 +68,23 @@ defmodule ExileAuth.AccountsTest do
       user = user_fixture()
       assert %Ecto.Changeset{} = Accounts.change_user(user)
     end
+
+    test "authenticate_user/2 returns a user when credentials are correct" do
+      assert {:ok, %User{} = user} = Accounts.create_user(@valid_attrs)
+      assert {:ok, ^user} =
+        Accounts.authenticate_user("some username", "some password")
+    end
+
+    test "authenticate_user/2 returns an error when the user does not exist" do
+      assert {:ok, %User{} = user} = Accounts.create_user(@valid_attrs)
+      assert {:error, :invalid_credentials} =
+        Accounts.authenticate_user("wrong username", "some password")
+    end
+
+    test "authenticate_user/2 returns an error the credentials are incorrect" do
+      assert {:ok, %User{} = user} = Accounts.create_user(@valid_attrs)
+      assert {:error, :invalid_credentials} =
+        Accounts.authenticate_user("some username", "wrong password")
+    end
   end
 end
