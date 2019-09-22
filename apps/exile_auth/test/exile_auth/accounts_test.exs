@@ -1,14 +1,14 @@
 defmodule ExileAuth.AccountsTest do
-  use ExileAuth.DataCase
+  use Exile.DataCase
 
   alias ExileAuth.Accounts
 
   describe "users" do
     alias ExileAuth.Accounts.User
 
-    @valid_attrs %{password_hash: "some password_hash", permissions: %{}, username: "some username"}
-    @update_attrs %{password_hash: "some updated password_hash", permissions: %{}, username: "some updated username"}
-    @invalid_attrs %{password_hash: nil, permissions: nil, username: nil}
+    @valid_attrs %{password: "some password", permissions: %{}, username: "some username"}
+    @update_attrs %{password: "some updated password", permissions: %{}, username: "some updated username"}
+    @invalid_attrs %{password: nil, permissions: nil, username: nil}
 
     def user_fixture(attrs \\ %{}) do
       {:ok, user} =
@@ -31,7 +31,9 @@ defmodule ExileAuth.AccountsTest do
 
     test "create_user/1 with valid data creates a user" do
       assert {:ok, %User{} = user} = Accounts.create_user(@valid_attrs)
-      assert user.password_hash == "some password_hash"
+      # Verify password is not set and the hash is correct
+      assert user.password == nil
+      assert Bcrypt.verify_pass("some password", user.password_hash)
       assert user.permissions == %{}
       assert user.username == "some username"
     end
@@ -43,7 +45,9 @@ defmodule ExileAuth.AccountsTest do
     test "update_user/2 with valid data updates the user" do
       user = user_fixture()
       assert {:ok, %User{} = user} = Accounts.update_user(user, @update_attrs)
-      assert user.password_hash == "some updated password_hash"
+      # Verify password is not set and the hash is correct
+      assert user.password == nil
+      assert Bcrypt.verify_pass("some updated password", user.password_hash)
       assert user.permissions == %{}
       assert user.username == "some updated username"
     end
