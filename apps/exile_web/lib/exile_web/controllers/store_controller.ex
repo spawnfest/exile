@@ -25,6 +25,26 @@ defmodule ExileWeb.StoreController do
     end
   end
 
+  def delete(conn, %{"path" => path} = params) do
+    epath = exile_path(path)
+    case Exile.delete(epath, Map.drop(params, ["path"])) do
+      {:ok, _} ->
+        send_resp(conn, 200, "Successfully deleted data at path #{epath}")
+      {:error, :not_found} ->
+        send_resp(conn, 404, "Resource at path #{epath} not found")
+    end
+  end
+
+  def put(conn, %{"path" => path} = params) do
+    epath = exile_path(path)
+    case Exile.put(epath, Map.drop(params, ["path"])) do
+      {:ok, _} ->
+        send_resp(conn, 200, "Successfully updated data at path #{epath}")
+      {:error, :not_found} ->
+        send_resp(conn, 404, "Resource at path #{epath} not found")
+    end
+  end
+
   # Takes list of path items and joins into a path for Exile to digest
   defp exile_path(path), do: Enum.join(path, "/")
 end

@@ -38,6 +38,8 @@ defmodule ExileWeb.Router do
       pipe_through [:ensure_auth]
       get "/*path", StoreController, :get
       post "/*path", StoreController, :post
+      put "/*path", StoreController, :put
+      delete "/*path", StoreController, :delete
     end
   end
 end
