@@ -91,13 +91,13 @@ defmodule ExileTest do
 
       post = Jason.decode!(json)
       assert {:ok, post_id} = Exile.post("posts", post)
-      assert :ok = Exile.put("posts/#{post_id}/author", "evande")
-      assert "evadne" = Exile.get("posts/#{post_id}/author")
+      assert :ok = Exile.put("posts/#{post_id}/author", "evadne")
+      assert {:ok, "evadne"} = Exile.get("posts/#{post_id}/author")
     after
       Exile.delete("posts")
     end
 
-    test "should return not found if trying to set non-existent attribute" do
+    test "should set non-existent attributes" do
       json = """
       {
         "author": "holsee",
@@ -108,7 +108,9 @@ defmodule ExileTest do
 
       post = Jason.decode!(json)
       assert {:ok, post_id} = Exile.post("posts", post)
-      assert {:error, :not_found} = Exile.put("posts/#{post_id}/something_else", "evande")
+      assert {:error, :not_found} = Exile.get("posts/#{post_id}/something_new")
+      assert :ok = Exile.put("posts/#{post_id}/something_new", "new_attr_value")
+      assert {:ok, "new_attr_value"} = Exile.get("posts/#{post_id}/something_new")
     after
       Exile.delete("posts")
     end
